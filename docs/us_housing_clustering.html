@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emilio Coronado de Palma">
+
+<title>US Housing Market Clustering &amp; PCA – Web para el análisis de clusterización de viviendas en EEUU</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Web para el análisis de clusterización de viviendas en EEUU</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./EEUU_CLUSTERIZADO.html"> 
+<span class="menu-text">EEUU Clusterizado</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#project-overview" id="toc-project-overview" class="nav-link active" data-scroll-target="#project-overview">Project Overview</a>
+  <ul class="collapse">
+  <li><a href="#data-sources-and-loading" id="toc-data-sources-and-loading" class="nav-link" data-scroll-target="#data-sources-and-loading">Data Sources and Loading</a></li>
+  <li><a href="#analysis-step" id="toc-analysis-step" class="nav-link" data-scroll-target="#analysis-step">Analysis Step</a></li>
+  <li><a href="#analysis-step-1" id="toc-analysis-step-1" class="nav-link" data-scroll-target="#analysis-step-1">Analysis Step</a></li>
+  <li><a href="#principal-component-analysis-pca" id="toc-principal-component-analysis-pca" class="nav-link" data-scroll-target="#principal-component-analysis-pca">Principal Component Analysis (PCA)</a></li>
+  <li><a href="#choosing-the-number-of-clusters-k" id="toc-choosing-the-number-of-clusters-k" class="nav-link" data-scroll-target="#choosing-the-number-of-clusters-k">Choosing the Number of Clusters (K)</a></li>
+  <li><a href="#principal-component-analysis-pca-1" id="toc-principal-component-analysis-pca-1" class="nav-link" data-scroll-target="#principal-component-analysis-pca-1">Principal Component Analysis (PCA)</a></li>
+  <li><a href="#choosing-the-number-of-clusters-k-1" id="toc-choosing-the-number-of-clusters-k-1" class="nav-link" data-scroll-target="#choosing-the-number-of-clusters-k-1">Choosing the Number of Clusters (K)</a></li>
+  <li><a href="#principal-component-analysis-pca-2" id="toc-principal-component-analysis-pca-2" class="nav-link" data-scroll-target="#principal-component-analysis-pca-2">Principal Component Analysis (PCA)</a></li>
+  <li><a href="#principal-component-analysis-pca-3" id="toc-principal-component-analysis-pca-3" class="nav-link" data-scroll-target="#principal-component-analysis-pca-3">Principal Component Analysis (PCA)</a></li>
+  <li><a href="#data-preparation-and-standardization" id="toc-data-preparation-and-standardization" class="nav-link" data-scroll-target="#data-preparation-and-standardization">Data Preparation and Standardization</a></li>
+  <li><a href="#analysis-step-2" id="toc-analysis-step-2" class="nav-link" data-scroll-target="#analysis-step-2">Analysis Step</a></li>
+  <li><a href="#principal-component-analysis-pca-4" id="toc-principal-component-analysis-pca-4" class="nav-link" data-scroll-target="#principal-component-analysis-pca-4">Principal Component Analysis (PCA)</a></li>
+  <li><a href="#analysis-step-3" id="toc-analysis-step-3" class="nav-link" data-scroll-target="#analysis-step-3">Analysis Step</a></li>
+  <li><a href="#analysis-step-4" id="toc-analysis-step-4" class="nav-link" data-scroll-target="#analysis-step-4">Analysis Step</a></li>
+  <li><a href="#geospatial-visualization-of-clusters" id="toc-geospatial-visualization-of-clusters" class="nav-link" data-scroll-target="#geospatial-visualization-of-clusters">Geospatial Visualization of Clusters</a></li>
+  <li><a href="#geospatial-visualization-of-clusters-1" id="toc-geospatial-visualization-of-clusters-1" class="nav-link" data-scroll-target="#geospatial-visualization-of-clusters-1">Geospatial Visualization of Clusters</a></li>
+  <li><a href="#geospatial-visualization-of-clusters-2" id="toc-geospatial-visualization-of-clusters-2" class="nav-link" data-scroll-target="#geospatial-visualization-of-clusters-2">Geospatial Visualization of Clusters</a></li>
+  <li><a href="#geospatial-visualization-of-clusters-3" id="toc-geospatial-visualization-of-clusters-3" class="nav-link" data-scroll-target="#geospatial-visualization-of-clusters-3">Geospatial Visualization of Clusters</a></li>
+  </ul></li>
+  <li><a href="#conclusions-and-next-steps" id="toc-conclusions-and-next-steps" class="nav-link" data-scroll-target="#conclusions-and-next-steps">Conclusions and Next Steps</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">US Housing Market Clustering &amp; PCA</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Emilio Coronado de Palma </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    This report segments US housing markets using PCA and K-Means over market, POI, and demographic features. We document the methodology, interpret principal components, profile clusters, and map their spatial distribution.
+  </div>
+</div>
+
+
+</header>
+
+
+<section id="project-overview" class="level1">
+<h1>Project Overview</h1>
+<p>This report presents a <strong>data-driven segmentation</strong> of the US housing market at ZIP/city level. We combine housing indicators (e.g., median sale/list prices, inventory, DOM) with <strong>points of interest (POIs)</strong> from OSM and <strong>demographics</strong> from ACS/Census. Our workflow focuses on <strong>standardization → dimensionality reduction (PCA) → clustering (K-Means)</strong> and <strong>geospatial visualization</strong>. We keep the code unchanged and emphasize clear, reproducible interpretation of each step.</p>
+<p><strong>Key questions</strong> we address: - Which latent dimensions best summarize variation across locations? - How many distinct market segments (clusters) emerge? - What characterizes each cluster in terms of market signals, POIs, and demographics? - Where are these clusters located geographically?</p>
+<blockquote class="blockquote">
+<p>Note: This document does <strong>not</strong> include supervised price prediction. The emphasis is on structure discovery and interpretation.</p>
+</blockquote>
+<section id="data-sources-and-loading" class="level2">
+<h2 class="anchored" data-anchor-id="data-sources-and-loading">Data Sources and Loading</h2>
+<p>We start by loading the main dataset from <strong>Kaggle (HousingTS)</strong> and merging auxiliary features when available (POI counts from <strong>OSM</strong> and <strong>ACS/Census</strong> demographics). We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-dependent features can be aggregated at the desired granularity.</p>
+</section>
+<section id="analysis-step" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-step">Analysis Step</h2>
+<p>Below we execute the corresponding step and display intermediate outputs for inspection and traceability.</p>
+</section>
+<section id="analysis-step-1" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-step-1">Analysis Step</h2>
+<p>Below we execute the corresponding step and display intermediate outputs for inspection and traceability.</p>
+</section>
+<section id="principal-component-analysis-pca" class="level2">
+<h2 class="anchored" data-anchor-id="principal-component-analysis-pca">Principal Component Analysis (PCA)</h2>
+<p>We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting <strong>PC1</strong> and <strong>PC2</strong> helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.</p>
+<div id="589d595a" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308
+ 0.02503939 0.02146856 0.01447887]
+[0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393
+ 0.87196332 0.89343188 0.90791075]</code></pre>
+</div>
+</div>
+</section>
+<section id="choosing-the-number-of-clusters-k" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-the-number-of-clusters-k">Choosing the Number of Clusters (K)</h2>
+<p>We evaluate candidate values of <strong>K</strong> (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.</p>
+<div id="4c14e8a3" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-stdout">
+<pre><code>Componentes PCA: 9
+Varianza explicada por componente: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308
+ 0.02503939 0.02146856 0.01447887]
+Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393
+ 0.87196332 0.89343188 0.90791075]</code></pre>
+</div>
+</div>
+</section>
+<section id="principal-component-analysis-pca-1" class="level2">
+<h2 class="anchored" data-anchor-id="principal-component-analysis-pca-1">Principal Component Analysis (PCA)</h2>
+<p>We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting <strong>PC1</strong> and <strong>PC2</strong> helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.</p>
+<div id="f879150d" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(pca_df[<span class="st">"PC1"</span>], pca_df[<span class="st">"PC2"</span>], s<span class="op">=</span><span class="dv">8</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"PC1"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"PC2"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Espacio PCA = PC1 vs PC2"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="choosing-the-number-of-clusters-k-1" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-the-number-of-clusters-k-1">Choosing the Number of Clusters (K)</h2>
+<p>We evaluate candidate values of <strong>K</strong> (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.</p>
+<div id="894e9c3e" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-stdout">
+<pre><code>k con mejor silueta: 4</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="principal-component-analysis-pca-2" class="level2">
+<h2 class="anchored" data-anchor-id="principal-component-analysis-pca-2">Principal Component Analysis (PCA)</h2>
+<p>We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting <strong>PC1</strong> and <strong>PC2</strong> helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.</p>
+</section>
+<section id="principal-component-analysis-pca-3" class="level2">
+<h2 class="anchored" data-anchor-id="principal-component-analysis-pca-3">Principal Component Analysis (PCA)</h2>
+<p>We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting <strong>PC1</strong> and <strong>PC2</strong> helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.</p>
+<div id="c5fc6c0d" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>station                    6.292687
+restaurant                 6.033795
+supermarket                5.931101
+bank                       5.798149
+park                       5.090172
+hospital                   4.288910
+school                     3.899366
+median_list_ppsf           2.905003
+median_ppsf                2.526744
+bus                        2.178003
+Median Home Value          1.285565
+price                      1.164426
+median_sale_price          1.155048
+Total Housing Units        0.807132
+mall                       0.791088
+median_list_price          0.729817
+Total Labor Force          0.695403
+Median Commute Time        0.679908
+Per Capita Income          0.656566
+Total School Enrollment    0.654586
+dtype: float64</code></pre>
+</div>
+</div>
+</section>
+<section id="data-preparation-and-standardization" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation-and-standardization">Data Preparation and Standardization</h2>
+<p>Before multivariate analysis, features are standardized using <strong>z-scores</strong> to place all variables on comparable scales. This is crucial for PCA and K-Means, which are sensitive to differences in units and magnitude.</p>
+</section>
+<section id="analysis-step-2" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-step-2">Analysis Step</h2>
+<p>Below we execute the corresponding step and display intermediate outputs for inspection and traceability.</p>
+<div id="d62c4783" class="cell" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="11">
+<style type="text/css">
+#T_1aa4a_row0_col0 {
+  background-color: #cedaeb;
+  color: #000000;
+}
+#T_1aa4a_row0_col1 {
+  background-color: #cbd8ee;
+  color: #000000;
+}
+#T_1aa4a_row0_col2 {
+  background-color: #c4d5f3;
+  color: #000000;
+}
+#T_1aa4a_row0_col3 {
+  background-color: #c9d7f0;
+  color: #000000;
+}
+#T_1aa4a_row0_col4, #T_1aa4a_row0_col6 {
+  background-color: #c3d5f4;
+  color: #000000;
+}
+#T_1aa4a_row0_col5, #T_1aa4a_row0_col8 {
+  background-color: #c6d6f1;
+  color: #000000;
+}
+#T_1aa4a_row0_col7 {
+  background-color: #c5d6f2;
+  color: #000000;
+}
+#T_1aa4a_row0_col9, #T_1aa4a_row0_col14 {
+  background-color: #cad8ef;
+  color: #000000;
+}
+#T_1aa4a_row0_col10 {
+  background-color: #bfd3f6;
+  color: #000000;
+}
+#T_1aa4a_row0_col11, #T_1aa4a_row0_col12, #T_1aa4a_row0_col18 {
+  background-color: #c7d7f0;
+  color: #000000;
+}
+#T_1aa4a_row0_col13 {
+  background-color: #a5c3fe;
+  color: #000000;
+}
+#T_1aa4a_row0_col15 {
+  background-color: #ccd9ed;
+  color: #000000;
+}
+#T_1aa4a_row0_col16, #T_1aa4a_row0_col17, #T_1aa4a_row0_col19 {
+  background-color: #a6c4fe;
+  color: #000000;
+}
+#T_1aa4a_row1_col0, #T_1aa4a_row1_col1, #T_1aa4a_row3_col19 {
+  background-color: #d8dce2;
+  color: #000000;
+}
+#T_1aa4a_row1_col2, #T_1aa4a_row1_col9 {
+  background-color: #dfdbd9;
+  color: #000000;
+}
+#T_1aa4a_row1_col3, #T_1aa4a_row3_col13, #T_1aa4a_row3_col16 {
+  background-color: #dbdcde;
+  color: #000000;
+}
+#T_1aa4a_row1_col4 {
+  background-color: #e0dbd8;
+  color: #000000;
+}
+#T_1aa4a_row1_col5 {
+  background-color: #dedcdb;
+  color: #000000;
+}
+#T_1aa4a_row1_col6, #T_1aa4a_row1_col14, #T_1aa4a_row3_col0 {
+  background-color: #e4d9d2;
+  color: #000000;
+}
+#T_1aa4a_row1_col7, #T_1aa4a_row1_col15 {
+  background-color: #cfdaea;
+  color: #000000;
+}
+#T_1aa4a_row1_col8 {
+  background-color: #d1dae9;
+  color: #000000;
+}
+#T_1aa4a_row1_col10 {
+  background-color: #d5dbe5;
+  color: #000000;
+}
+#T_1aa4a_row1_col11, #T_1aa4a_row1_col12 {
+  background-color: #cdd9ec;
+  color: #000000;
+}
+#T_1aa4a_row1_col13, #T_1aa4a_row2_col16 {
+  background-color: #f59c7d;
+  color: #000000;
+}
+#T_1aa4a_row1_col16 {
+  background-color: #f49a7b;
+  color: #000000;
+}
+#T_1aa4a_row1_col17, #T_1aa4a_row1_col19 {
+  background-color: #f4987a;
+  color: #000000;
+  font-weight: bold;
+}
+#T_1aa4a_row1_col18 {
+  background-color: #d6dce4;
+  color: #000000;
+}
+#T_1aa4a_row2_col0, #T_1aa4a_row2_col1, #T_1aa4a_row2_col2, #T_1aa4a_row2_col3, #T_1aa4a_row2_col4, #T_1aa4a_row2_col5, #T_1aa4a_row2_col6, #T_1aa4a_row2_col7, #T_1aa4a_row2_col8, #T_1aa4a_row2_col9 {
+  background-color: #b40426;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row2_col10, #T_1aa4a_row2_col11, #T_1aa4a_row2_col12 {
+  background-color: #cf453c;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row2_col13, #T_1aa4a_row3_col15 {
+  background-color: #ed8366;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row2_col14 {
+  background-color: #c83836;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row2_col15 {
+  background-color: #e8765c;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row2_col17 {
+  background-color: #f5a081;
+  color: #000000;
+}
+#T_1aa4a_row2_col18 {
+  background-color: #f08a6c;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row2_col19 {
+  background-color: #f7a889;
+  color: #000000;
+}
+#T_1aa4a_row3_col1 {
+  background-color: #efcebd;
+  color: #000000;
+}
+#T_1aa4a_row3_col2, #T_1aa4a_row3_col5, #T_1aa4a_row3_col9 {
+  background-color: #f2cab5;
+  color: #000000;
+}
+#T_1aa4a_row3_col3 {
+  background-color: #f0cdbb;
+  color: #000000;
+}
+#T_1aa4a_row3_col4 {
+  background-color: #f3c7b1;
+  color: #000000;
+}
+#T_1aa4a_row3_col6 {
+  background-color: #f2cbb7;
+  color: #000000;
+}
+#T_1aa4a_row3_col7 {
+  background-color: #eb7d62;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row3_col8 {
+  background-color: #ec8165;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row3_col10 {
+  background-color: #d1493f;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row3_col11, #T_1aa4a_row3_col12 {
+  background-color: #de614d;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+#T_1aa4a_row3_col14 {
+  background-color: #f3c8b2;
+  color: #000000;
+}
+#T_1aa4a_row3_col17 {
+  background-color: #d9dce1;
+  color: #000000;
+}
+#T_1aa4a_row3_col18 {
+  background-color: #ec7f63;
+  color: #f1f1f1;
+  font-weight: bold;
+}
+</style>
+
+<div id="T_1aa4a" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_1aa4a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Perfiles de cluster (z-scores estandarizados) — columnas ordenadas por importancia
+</figcaption>
+<div aria-describedby="T_1aa4a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_1aa4a" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_1aa4a_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">station</th>
+<th id="T_1aa4a_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">restaurant</th>
+<th id="T_1aa4a_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">supermarket</th>
+<th id="T_1aa4a_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">bank</th>
+<th id="T_1aa4a_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">park</th>
+<th id="T_1aa4a_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">hospital</th>
+<th id="T_1aa4a_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">school</th>
+<th id="T_1aa4a_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">median_list_ppsf</th>
+<th id="T_1aa4a_level0_col8" class="col_heading level0 col8" data-quarto-table-cell-role="th">median_ppsf</th>
+<th id="T_1aa4a_level0_col9" class="col_heading level0 col9" data-quarto-table-cell-role="th">bus</th>
+<th id="T_1aa4a_level0_col10" class="col_heading level0 col10" data-quarto-table-cell-role="th">Median Home Value</th>
+<th id="T_1aa4a_level0_col11" class="col_heading level0 col11" data-quarto-table-cell-role="th">price</th>
+<th id="T_1aa4a_level0_col12" class="col_heading level0 col12" data-quarto-table-cell-role="th">median_sale_price</th>
+<th id="T_1aa4a_level0_col13" class="col_heading level0 col13" data-quarto-table-cell-role="th">Total Housing Units</th>
+<th id="T_1aa4a_level0_col14" class="col_heading level0 col14" data-quarto-table-cell-role="th">mall</th>
+<th id="T_1aa4a_level0_col15" class="col_heading level0 col15" data-quarto-table-cell-role="th">median_list_price</th>
+<th id="T_1aa4a_level0_col16" class="col_heading level0 col16" data-quarto-table-cell-role="th">Total Labor Force</th>
+<th id="T_1aa4a_level0_col17" class="col_heading level0 col17" data-quarto-table-cell-role="th">Median Commute Time</th>
+<th id="T_1aa4a_level0_col18" class="col_heading level0 col18" data-quarto-table-cell-role="th">Per Capita Income</th>
+<th id="T_1aa4a_level0_col19" class="col_heading level0 col19" data-quarto-table-cell-role="th">Total School Enrollment</th>
+</tr>
+<tr class="even">
+<th class="index_name level0" data-quarto-table-cell-role="th">cluster</th>
+<th class="blank col0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col1" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col2" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col3" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col4" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col5" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col6" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col7" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col8" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col9" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col10" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col11" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col12" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col13" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col14" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col15" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col16" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col17" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col18" data-quarto-table-cell-role="th">&nbsp;</th>
+<th class="blank col19" data-quarto-table-cell-role="th">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_1aa4a_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_1aa4a_row0_col0" class="data row0 col0">-0.22</td>
+<td id="T_1aa4a_row0_col1" class="data row0 col1">-0.26</td>
+<td id="T_1aa4a_row0_col2" class="data row0 col2">-0.36</td>
+<td id="T_1aa4a_row0_col3" class="data row0 col3">-0.29</td>
+<td id="T_1aa4a_row0_col4" class="data row0 col4">-0.37</td>
+<td id="T_1aa4a_row0_col5" class="data row0 col5">-0.32</td>
+<td id="T_1aa4a_row0_col6" class="data row0 col6">-0.36</td>
+<td id="T_1aa4a_row0_col7" class="data row0 col7">-0.34</td>
+<td id="T_1aa4a_row0_col8" class="data row0 col8">-0.33</td>
+<td id="T_1aa4a_row0_col9" class="data row0 col9">-0.27</td>
+<td id="T_1aa4a_row0_col10" class="data row0 col10">-0.42</td>
+<td id="T_1aa4a_row0_col11" class="data row0 col11">-0.30</td>
+<td id="T_1aa4a_row0_col12" class="data row0 col12">-0.30</td>
+<td id="T_1aa4a_row0_col13" class="data row0 col13">-0.72</td>
+<td id="T_1aa4a_row0_col14" class="data row0 col14">-0.28</td>
+<td id="T_1aa4a_row0_col15" class="data row0 col15">-0.24</td>
+<td id="T_1aa4a_row0_col16" class="data row0 col16">-0.72</td>
+<td id="T_1aa4a_row0_col17" class="data row0 col17">-0.71</td>
+<td id="T_1aa4a_row0_col18" class="data row0 col18">-0.30</td>
+<td id="T_1aa4a_row0_col19" class="data row0 col19">-0.71</td>
+</tr>
+<tr class="even">
+<td id="T_1aa4a_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_1aa4a_row1_col0" class="data row1 col0">-0.07</td>
+<td id="T_1aa4a_row1_col1" class="data row1 col1">-0.08</td>
+<td id="T_1aa4a_row1_col2" class="data row1 col2">0.04</td>
+<td id="T_1aa4a_row1_col3" class="data row1 col3">-0.03</td>
+<td id="T_1aa4a_row1_col4" class="data row1 col4">0.06</td>
+<td id="T_1aa4a_row1_col5" class="data row1 col5">0.03</td>
+<td id="T_1aa4a_row1_col6" class="data row1 col6">0.11</td>
+<td id="T_1aa4a_row1_col7" class="data row1 col7">-0.20</td>
+<td id="T_1aa4a_row1_col8" class="data row1 col8">-0.18</td>
+<td id="T_1aa4a_row1_col9" class="data row1 col9">0.04</td>
+<td id="T_1aa4a_row1_col10" class="data row1 col10">-0.12</td>
+<td id="T_1aa4a_row1_col11" class="data row1 col11">-0.23</td>
+<td id="T_1aa4a_row1_col12" class="data row1 col12">-0.22</td>
+<td id="T_1aa4a_row1_col13" class="data row1 col13">0.98</td>
+<td id="T_1aa4a_row1_col14" class="data row1 col14">0.12</td>
+<td id="T_1aa4a_row1_col15" class="data row1 col15">-0.19</td>
+<td id="T_1aa4a_row1_col16" class="data row1 col16">1.00</td>
+<td id="T_1aa4a_row1_col17" class="data row1 col17">1.00</td>
+<td id="T_1aa4a_row1_col18" class="data row1 col18">-0.10</td>
+<td id="T_1aa4a_row1_col19" class="data row1 col19">1.01</td>
+</tr>
+<tr class="odd">
+<td id="T_1aa4a_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_1aa4a_row2_col0" class="data row2 col0">4.96</td>
+<td id="T_1aa4a_row2_col1" class="data row2 col1">4.89</td>
+<td id="T_1aa4a_row2_col2" class="data row2 col2">4.86</td>
+<td id="T_1aa4a_row2_col3" class="data row2 col3">4.80</td>
+<td id="T_1aa4a_row2_col4" class="data row2 col4">4.51</td>
+<td id="T_1aa4a_row2_col5" class="data row2 col5">4.14</td>
+<td id="T_1aa4a_row2_col6" class="data row2 col6">3.95</td>
+<td id="T_1aa4a_row2_col7" class="data row2 col7">3.33</td>
+<td id="T_1aa4a_row2_col8" class="data row2 col8">3.09</td>
+<td id="T_1aa4a_row2_col9" class="data row2 col9">2.96</td>
+<td id="T_1aa4a_row2_col10" class="data row2 col10">1.70</td>
+<td id="T_1aa4a_row2_col11" class="data row2 col11">1.70</td>
+<td id="T_1aa4a_row2_col12" class="data row2 col12">1.69</td>
+<td id="T_1aa4a_row2_col13" class="data row2 col13">1.21</td>
+<td id="T_1aa4a_row2_col14" class="data row2 col14">1.77</td>
+<td id="T_1aa4a_row2_col15" class="data row2 col15">1.32</td>
+<td id="T_1aa4a_row2_col16" class="data row2 col16">0.98</td>
+<td id="T_1aa4a_row2_col17" class="data row2 col17">0.93</td>
+<td id="T_1aa4a_row2_col18" class="data row2 col18">1.15</td>
+<td id="T_1aa4a_row2_col19" class="data row2 col19">0.85</td>
+</tr>
+<tr class="even">
+<td id="T_1aa4a_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_1aa4a_row3_col0" class="data row3 col0">0.12</td>
+<td id="T_1aa4a_row3_col1" class="data row3 col1">0.34</td>
+<td id="T_1aa4a_row3_col2" class="data row3 col2">0.42</td>
+<td id="T_1aa4a_row3_col3" class="data row3 col3">0.35</td>
+<td id="T_1aa4a_row3_col4" class="data row3 col4">0.46</td>
+<td id="T_1aa4a_row3_col5" class="data row3 col5">0.42</td>
+<td id="T_1aa4a_row3_col6" class="data row3 col6">0.40</td>
+<td id="T_1aa4a_row3_col7" class="data row3 col7">1.26</td>
+<td id="T_1aa4a_row3_col8" class="data row3 col8">1.22</td>
+<td id="T_1aa4a_row3_col9" class="data row3 col9">0.41</td>
+<td id="T_1aa4a_row3_col10" class="data row3 col10">1.67</td>
+<td id="T_1aa4a_row3_col11" class="data row3 col11">1.50</td>
+<td id="T_1aa4a_row3_col12" class="data row3 col12">1.50</td>
+<td id="T_1aa4a_row3_col13" class="data row3 col13">-0.03</td>
+<td id="T_1aa4a_row3_col14" class="data row3 col14">0.45</td>
+<td id="T_1aa4a_row3_col15" class="data row3 col15">1.21</td>
+<td id="T_1aa4a_row3_col16" class="data row3 col16">-0.03</td>
+<td id="T_1aa4a_row3_col17" class="data row3 col17">-0.05</td>
+<td id="T_1aa4a_row3_col18" class="data row3 col18">1.24</td>
+<td id="T_1aa4a_row3_col19" class="data row3 col19">-0.07</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="principal-component-analysis-pca-4" class="level2">
+<h2 class="anchored" data-anchor-id="principal-component-analysis-pca-4">Principal Component Analysis (PCA)</h2>
+<p>We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting <strong>PC1</strong> and <strong>PC2</strong> helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.</p>
+<div id="5384adc6" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>zcta <span class="op">=</span> gpd.read_file(<span class="st">"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>zcta.head()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>df_map <span class="op">=</span> pca_df[[<span class="st">"zipcode"</span>, <span class="st">"cluster"</span>,<span class="st">"city"</span>]].drop_duplicates()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>df_map[<span class="st">"zipcode_str"</span>] <span class="op">=</span> df_map[<span class="st">"zipcode"</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.zfill(<span class="dv">5</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#renombramos la variable para que tengan el mismo nombre en ambos datframes.</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>zcta <span class="op">=</span> zcta.rename(columns<span class="op">=</span>{<span class="st">"ZCTA5CE20"</span>: <span class="st">"zipcode_str"</span>})</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#mergeamos para tenerlo en una sola BBDD</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> zcta.merge(df_map, on<span class="op">=</span><span class="st">"zipcode_str"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>gdf.plot(column<span class="op">=</span><span class="st">"cluster"</span>, categorical<span class="op">=</span><span class="va">True</span>, legend<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="analysis-step-3" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-step-3">Analysis Step</h2>
+<p>Below we execute the corresponding step and display intermediate outputs for inspection and traceability.</p>
+<div id="308e71ca" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar por una ciudad</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ciudad <span class="op">=</span> <span class="st">"NY"</span>  <span class="co"># cámbialo por el nombre de la ciudad que te interese</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>gdf_city <span class="op">=</span> gdf[gdf[<span class="st">"city"</span>] <span class="op">==</span> ciudad].copy()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar cuántos clusters hay dentro de esa ciudad</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gdf_city[<span class="st">"cluster"</span>].value_counts())</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>gdf_city.plot(column<span class="op">=</span><span class="st">"cluster"</span>, categorical<span class="op">=</span><span class="va">True</span>, legend<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">"Set2"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="ss">f"Clusters en </span><span class="sc">{</span>ciudad<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>cluster
+0.0    535
+3.0    109
+2.0     93
+1.0     92
+Name: count, dtype: int64</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-14-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="analysis-step-4" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-step-4">Analysis Step</h2>
+<p>Below we execute the corresponding step and display intermediate outputs for inspection and traceability.</p>
+<div id="73ad86ef" class="cell" data-execution_count="14">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="geospatial-visualization-of-clusters" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-visualization-of-clusters">Geospatial Visualization of Clusters</h2>
+<p>We project clustered locations into a geographic map and render an <strong>interactive HTML</strong> (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs.&nbsp;suburban segmentation, and cross-state similarities.</p>
+<div id="42764789" class="cell" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="geospatial-visualization-of-clusters-1" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-visualization-of-clusters-1">Geospatial Visualization of Clusters</h2>
+<p>We project clustered locations into a geographic map and render an <strong>interactive HTML</strong> (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs.&nbsp;suburban segmentation, and cross-state similarities.</p>
+<div id="7d299033" class="cell" data-execution_count="16">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="us_housing_clustering_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="geospatial-visualization-of-clusters-2" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-visualization-of-clusters-2">Geospatial Visualization of Clusters</h2>
+<p>We project clustered locations into a geographic map and render an <strong>interactive HTML</strong> (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs.&nbsp;suburban segmentation, and cross-state similarities.</p>
+<div id="ac660e8a" class="cell" data-execution_count="17">
+<div class="cell-output cell-output-stdout">
+<pre><code>Mapa interactivo guardado en 'mapa_clusters_interactivo.html'</code></pre>
+</div>
+</div>
+</section>
+<section id="geospatial-visualization-of-clusters-3" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-visualization-of-clusters-3">Geospatial Visualization of Clusters</h2>
+<p>We project clustered locations into a geographic map and render an <strong>interactive HTML</strong> (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs.&nbsp;suburban segmentation, and cross-state similarities.</p>
+<div id="d3246af7" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>gdf_w <span class="op">=</span> gdf.to_crs(epsg<span class="op">=</span><span class="dv">4326</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>mG <span class="op">=</span> gdf_w.explore(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    column<span class="op">=</span><span class="st">"cluster"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    categorical<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span><span class="st">"Set2"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    tiles<span class="op">=</span><span class="st">"CartoDB positron"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    legend<span class="op">=</span><span class="va">True</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>mG.save(<span class="st">"mapa_clusters_interactivo_global.html"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="conclusions-and-next-steps" class="level1">
+<h1>Conclusions and Next Steps</h1>
+<ul>
+<li><strong>Latent structure:</strong> PCA reveals a small number of components explaining most cross-location variability, mixing market intensity and contextual features.</li>
+<li><strong>Market segments:</strong> K-Means uncovers distinct clusters with coherent profiles—useful for benchmarking cities/ZIPs and tracking structural differences over time.</li>
+<li><strong>Spatial logic:</strong> The interactive map highlights regional patterns and outliers, aiding exploratory policy or investment insights.</li>
+</ul>
+<p><strong>Future extensions</strong> (optional): - Time-aware clustering or dynamic PCA by year. - Dashboarding (e.g., Streamlit/Panel) for per-city drill-down. - Additional validation via stability checks and alternative clustering methods.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
