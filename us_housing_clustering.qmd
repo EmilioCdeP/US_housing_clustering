@@ -11,28 +11,17 @@ format:
 editor: visual
 ---
 
-
 # Project Overview
 
-This report presents a **data-driven segmentation** of the US housing market at ZIP/city level. 
-We combine housing indicators (e.g., median sale/list prices, inventory, DOM) with **points of interest (POIs)** from OSM and **demographics** from ACS/Census. 
-Our workflow focuses on **standardization → dimensionality reduction (PCA) → clustering (K-Means)** and **geospatial visualization**. 
-We keep the code unchanged and emphasize clear, reproducible interpretation of each step.
+This report presents a **data-driven segmentation** of the US housing market at ZIP/city level. We combine housing indicators (e.g., median sale/list prices, inventory, DOM) with **points of interest (POIs)** from OSM and **demographics** from ACS/Census. Our workflow focuses on **standardization → dimensionality reduction (PCA) → clustering (K-Means)** and **geospatial visualization**. We keep the code unchanged and emphasize clear, reproducible interpretation of each step.
 
-**Key questions** we address:
-- Which latent dimensions best summarize variation across locations?
-- How many distinct market segments (clusters) emerge?
-- What characterizes each cluster in terms of market signals, POIs, and demographics?
-- Where are these clusters located geographically?
+**Key questions** we address: - Which latent dimensions best summarize variation across locations? - How many distinct market segments (clusters) emerge? - What characterizes each cluster in terms of market signals, POIs, and demographics? - Where are these clusters located geographically?
 
 > Note: This document does **not** include supervised price prediction. The emphasis is on structure discovery and interpretation.
 
-
-
 ## Data Sources and Loading
 
-We start by loading the main dataset from **Kaggle (HousingTS)** and merging auxiliary features when available (POI counts from **OSM** and **ACS/Census** demographics). 
-We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-dependent features can be aggregated at the desired granularity.
+We start by loading the main dataset from **Kaggle (HousingTS)** and merging auxiliary features when available (POI counts from **OSM** and **ACS/Census** demographics). We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-dependent features can be aggregated at the desired granularity.
 
 ```{python}
 #| echo: false
@@ -40,14 +29,12 @@ We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-depend
 import pandas as pd
 
 # 1) Cargar datos
-df = pd.read_csv("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/MLpositron/data/HouseTS.csv")
+df = pd.read_csv("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/HouseTS.csv")
 
 df.head()
 
 
 ```
-
-
 
 ## Analysis Step
 
@@ -62,8 +49,6 @@ Below we execute the corresponding step and display intermediate outputs for ins
 df.info()
 ```
 
-
-
 ## Analysis Step
 
 Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
@@ -74,13 +59,9 @@ Below we execute the corresponding step and display intermediate outputs for ins
 df.describe(include='all')
 ```
 
-
-
 ## Principal Component Analysis (PCA)
 
-We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
-Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
-Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
 
 ```{python}
 #| eval: true
@@ -132,12 +113,9 @@ print(cum_explained)
 
 ```
 
-
-
 ## Choosing the Number of Clusters (K)
 
-We evaluate candidate values of **K** (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. 
-The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.
+We evaluate candidate values of **K** (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.
 
 ```{python}
 #| eval: true
@@ -158,13 +136,9 @@ print("Varianza explicada por componente:", explained)
 print("Varianza explicada acumulada:", cum_explained)
 ```
 
-
-
 ## Principal Component Analysis (PCA)
 
-We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
-Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
-Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
 
 ```{python}
 #| eval: true
@@ -178,12 +152,9 @@ plt.title("Espacio PCA = PC1 vs PC2")
 plt.show()
 ```
 
-
-
 ## Choosing the Number of Clusters (K)
 
-We evaluate candidate values of **K** (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. 
-The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.
+We evaluate candidate values of **K** (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.
 
 ```{python}
 #| eval: true
@@ -229,13 +200,9 @@ plt.show()
 
 ```
 
-
-
 ## Principal Component Analysis (PCA)
 
-We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
-Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
-Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
 
 ```{python}
 #| eval: true
@@ -253,13 +220,9 @@ cluster_stats
 
 ```
 
-
-
 ## Principal Component Analysis (PCA)
 
-We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
-Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
-Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
 
 ```{python}
 #| eval: true
@@ -305,12 +268,9 @@ cluster_variability.head(20)
 
 ```
 
-
-
 ## Data Preparation and Standardization
 
-Before multivariate analysis, features are standardized using **z-scores** to place all variables on comparable scales. 
-This is crucial for PCA and K-Means, which are sensitive to differences in units and magnitude.
+Before multivariate analysis, features are standardized using **z-scores** to place all variables on comparable scales. This is crucial for PCA and K-Means, which are sensitive to differences in units and magnitude.
 
 ```{python}
 #| eval: true
@@ -382,8 +342,6 @@ cluster_profile = cluster_stats_std[ordered_vars].copy()
 
 ```
 
-
-
 ## Analysis Step
 
 Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
@@ -418,13 +376,9 @@ styler
 
 ```
 
-
-
 ## Principal Component Analysis (PCA)
 
-We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
-Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
-Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
 
 ```{python}
 #| eval: true
@@ -432,7 +386,7 @@ Scatter plots in PCA space offer a compact view of separation tendencies prior t
 #| include: true
 import geopandas as gpd
 
-zcta = gpd.read_file("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/MLpositron/data/Shapefiles/tl_2020_us_zcta520.shp")
+zcta = gpd.read_file("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp")
 
 zcta.head()
 
@@ -452,8 +406,6 @@ gdf = zcta.merge(df_map, on="zipcode_str", how="left")
 gdf.plot(column="cluster", categorical=True, legend=True, figsize=(12,8))
 
 ```
-
-
 
 ## Analysis Step
 
@@ -477,8 +429,6 @@ plt.show()
 
 ```
 
-
-
 ## Analysis Step
 
 Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
@@ -501,12 +451,9 @@ plt.show()
 
 ```
 
-
-
 ## Geospatial Visualization of Clusters
 
-We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
-This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
 
 ```{python}
 #| eval: true
@@ -596,12 +543,9 @@ plot_city_clusters(
 
 ```
 
-
-
 ## Geospatial Visualization of Clusters
 
-We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
-This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
 
 ```{python}
 #| eval: true
@@ -660,12 +604,9 @@ plt.show()
 
 ```
 
-
-
 ## Geospatial Visualization of Clusters
 
-We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
-This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
 
 ```{python}
 #| eval: true
@@ -699,12 +640,9 @@ print("Mapa interactivo guardado en 'mapa_clusters_interactivo.html'")
 
 ```
 
-
-
 ## Geospatial Visualization of Clusters
 
-We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
-This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
 
 ```{python}
 #| eval: false
@@ -724,15 +662,10 @@ print("Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'")
 
 ```
 
-
-
 # Conclusions and Next Steps
 
-- **Latent structure:** PCA reveals a small number of components explaining most cross-location variability, mixing market intensity and contextual features.
-- **Market segments:** K-Means uncovers distinct clusters with coherent profiles—useful for benchmarking cities/ZIPs and tracking structural differences over time.
-- **Spatial logic:** The interactive map highlights regional patterns and outliers, aiding exploratory policy or investment insights.
+-   **Latent structure:** PCA reveals a small number of components explaining most cross-location variability, mixing market intensity and contextual features.
+-   **Market segments:** K-Means uncovers distinct clusters with coherent profiles—useful for benchmarking cities/ZIPs and tracking structural differences over time.
+-   **Spatial logic:** The interactive map highlights regional patterns and outliers, aiding exploratory policy or investment insights.
 
-**Future extensions** (optional):
-- Time-aware clustering or dynamic PCA by year.
-- Dashboarding (e.g., Streamlit/Panel) for per-city drill-down.
-- Additional validation via stability checks and alternative clustering methods.
+**Future extensions** (optional): - Time-aware clustering or dynamic PCA by year. - Dashboarding (e.g., Streamlit/Panel) for per-city drill-down. - Additional validation via stability checks and alternative clustering methods.
