@@ -1,0 +1,738 @@
+---
+title: "US Housing Market Clustering & PCA"
+author: "Emilio Coronado de Palma"
+abstract: "This report segments US housing markets using PCA and K-Means over market, POI, and demographic features. We document the methodology, interpret principal components, profile clusters, and map their spatial distribution."
+format:
+  html:
+    code-link: true
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+editor: visual
+---
+
+
+# Project Overview
+
+This report presents a **data-driven segmentation** of the US housing market at ZIP/city level. 
+We combine housing indicators (e.g., median sale/list prices, inventory, DOM) with **points of interest (POIs)** from OSM and **demographics** from ACS/Census. 
+Our workflow focuses on **standardization → dimensionality reduction (PCA) → clustering (K-Means)** and **geospatial visualization**. 
+We keep the code unchanged and emphasize clear, reproducible interpretation of each step.
+
+**Key questions** we address:
+- Which latent dimensions best summarize variation across locations?
+- How many distinct market segments (clusters) emerge?
+- What characterizes each cluster in terms of market signals, POIs, and demographics?
+- Where are these clusters located geographically?
+
+> Note: This document does **not** include supervised price prediction. The emphasis is on structure discovery and interpretation.
+
+
+
+## Data Sources and Loading
+
+We start by loading the main dataset from **Kaggle (HousingTS)** and merging auxiliary features when available (POI counts from **OSM** and **ACS/Census** demographics). 
+We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-dependent features can be aggregated at the desired granularity.
+
+```{python}
+#| echo: false
+#| include: false
+import pandas as pd
+
+# 1) Cargar datos
+df = pd.read_csv("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/MLpositron/data/HouseTS.csv")
+
+df.head()
+
+
+```
+
+
+
+## Analysis Step
+
+Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
+
+```{python}
+#| echo: false
+#| eval: false
+#| message: false
+#| warning: false
+#| include: false
+df.info()
+```
+
+
+
+## Analysis Step
+
+Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
+
+```{python}
+#| include: false
+#| eval: false
+df.describe(include='all')
+```
+
+
+
+## Principal Component Analysis (PCA)
+
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
+Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
+Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+# PCA básico por ZIP para clustering
+#carga de librerías
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+
+
+# 2) Ponemos bien el formato de la fecha
+df["date"] = pd.to_datetime(df["date"])
+
+# 3) Seleccionar columnas numéricas y excluir identificadores/fecha/date
+numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
+cols_excluir = ["zipcode", "year", "date"]  # dejamos fuera IDs, año y fecha
+feature_cols = [c for c in numeric_cols if c not in cols_excluir]
+
+# 4) Agregar a nivel ZIP (media en el tiempo por ZIP, por que no queremos tener todas las series temporales de cada zip)
+agg_num = df.groupby("zipcode")[feature_cols].mean()
+
+# 5) Recuperar una ciudad representativa por ZIP (aunque debería estar bien segmentados ya, solo por asegurar) (la moda; si empata, el primero)
+def ciudad_moda(s):
+    m = s.mode()
+    return m.iloc[0] if not m.empty else s.iloc[0]
+
+zip_city = df.groupby("zipcode")["city"].agg(ciudad_moda)
+agg = agg_num.join(zip_city)
+
+# 6) Estandarizar
+X = agg_num.values
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 7) PCA reteniendo el 90% de la varianza
+pca = PCA(n_components=0.90, random_state=0)
+X_pca = pca.fit_transform(X_scaled)
+explained = pca.explained_variance_ratio_
+cum_explained = explained.cumsum()
+print(explained)
+print(cum_explained)
+
+```
+
+
+
+## Choosing the Number of Clusters (K)
+
+We evaluate candidate values of **K** (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. 
+The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+# 8) Resultado en DataFrame para clusterizar luego (KMeans/otros)
+pca_cols = [f"PC{i+1}" for i in range(X_pca.shape[1])]
+pca_df = pd.DataFrame(X_pca, index=agg.index, columns=pca_cols).reset_index()
+pca_df = pca_df.merge(zip_city.reset_index(), on="zipcode", how="left")
+
+# 9) Info rápida de varianza explicada
+explained = pca.explained_variance_ratio_
+cum_explained = explained.cumsum()
+
+print("Componentes PCA:", len(pca_cols))
+print("Varianza explicada por componente:", explained)
+print("Varianza explicada acumulada:", cum_explained)
+```
+
+
+
+## Principal Component Analysis (PCA)
+
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
+Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
+Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+
+```{python}
+#| eval: true
+#| echo: true
+#| include: true
+plt.figure(figsize=(8,6))
+plt.scatter(pca_df["PC1"], pca_df["PC2"], s=8, alpha=0.5)
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.title("Espacio PCA = PC1 vs PC2")
+plt.show()
+```
+
+
+
+## Choosing the Number of Clusters (K)
+
+We evaluate candidate values of **K** (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. 
+The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+# Nos quedamos solo con las componentes principales:
+pca_cols = [c for c in pca_df.columns if c.startswith("PC")]
+X = pca_df[pca_cols].values
+
+# --- 2) Elegir k de forma rápida con la silueta ---
+k_range = range(2, 11)
+sil_scores = []
+
+for k in k_range:
+    km = KMeans(n_clusters=k, n_init="auto", random_state=42)
+    labels = km.fit_predict(X)
+    sil = silhouette_score(X, labels)
+    sil_scores.append(sil)
+
+# k “óptimo” (máxima silueta)
+best_k = k_range[int(np.argmax(sil_scores))]
+print("k con mejor silueta:", best_k)
+
+# --- 3) Ajustar K-means definitivo con ese k ---
+kmeans = KMeans(n_clusters=best_k, n_init="auto", random_state=42)
+labels = kmeans.fit_predict(X)
+
+# Añadir etiquetas al DF
+pca_df["cluster"] = labels
+
+# --- 4) Visualizar en PC1 vs PC2 coloreado por cluster ---
+plt.figure(figsize=(9,6))
+scatter = plt.scatter(pca_df["PC1"], pca_df["PC2"], c=pca_df["cluster"], s=10, alpha=0.6)
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.title(f"K-means en espacio PCA (k={best_k})")
+plt.show()
+
+
+```
+
+
+
+## Principal Component Analysis (PCA)
+
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
+Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
+Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: false
+# Variables numéricas originales agregadas por ZIP
+num_cols = [c for c in df.columns 
+            if df[c].dtype != "object" and c not in ["year", "date"]]
+
+# Mergeamos por ZIP otra vez pero mantenemos cluster
+df_clusters = df.merge(pca_df[["zipcode", "cluster"]], on="zipcode")
+
+cluster_stats = df_clusters.groupby("cluster")[num_cols].mean()
+cluster_stats
+
+```
+
+
+
+## Principal Component Analysis (PCA)
+
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
+Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
+Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+# 1. Seleccionar variables numéricas a usar
+num_cols = [
+    c for c in df.columns
+    if df[c].dtype != 'object' and c not in ['year', 'date']
+]
+
+# 2. Agregar por ZIP (media temporal)
+agg = df.groupby("zipcode")[num_cols].mean()
+
+# 3. Añadir cluster
+agg = agg.merge(
+    pca_df[["zipcode", "cluster"]].set_index("zipcode"),
+    left_index=True,
+    right_index=True,
+    how="left"
+)
+
+
+
+# 4. Estandarizar todas las variables numéricas
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+agg_scaled = pd.DataFrame(
+    scaler.fit_transform(agg[num_cols]),
+    columns=num_cols,
+    index=agg.index
+)
+
+# 5. Calcular medias por cluster con variables estandarizadas
+cluster_stats_std = agg_scaled.join(agg["cluster"]).groupby("cluster").mean()
+
+# 6. Varianza entre clusters (correcta)
+cluster_variability = cluster_stats_std.var(axis=0).sort_values(ascending=False)
+cluster_variability.head(20)
+
+
+```
+
+
+
+## Data Preparation and Standardization
+
+Before multivariate analysis, features are standardized using **z-scores** to place all variables on comparable scales. 
+This is crucial for PCA and K-Means, which are sensitive to differences in units and magnitude.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: false
+
+# =========================
+# PERFIL DE CLUSTERS (TABLA)
+# =========================
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+# --- ENTRADAS requeridas ---
+# agg: DataFrame con tus observaciones (índice = id), columnas numéricas y la columna 'cluster'
+# num_cols: lista de columnas numéricas a estandarizar
+# Ej. ya lo tienes según tu mensaje:
+# agg, num_cols, agg["cluster"]
+
+# 1) Mapa de importancias (lo que compartiste)
+importance = {
+    "station": 6.292687,
+    "restaurant": 6.033795,
+    "supermarket": 5.931101,
+    "bank": 5.798149,
+    "park": 5.090172,
+    "hospital": 4.288910,
+    "school": 3.899366,
+    "median_list_ppsf": 2.905003,
+    "median_ppsf": 2.526744,
+    "bus": 2.178003,
+    "Median Home Value": 1.285565,
+    "price": 1.164426,
+    "median_sale_price": 1.155048,
+    "Total Housing Units": 0.807132,
+    "mall": 0.791088,
+    "median_list_price": 0.729817,
+    "Total Labor Force": 0.695403,
+    "Median Commute Time": 0.679908,
+    "Per Capita Income": 0.656566,
+    "Total School Enrollment": 0.654586,
+}
+
+# Aseguramos que solo usamos variables disponibles
+available_vars = [c for c in num_cols if c in importance]
+if len(available_vars) == 0:
+    raise ValueError("Ninguna de las variables de 'importance' está en num_cols.")
+
+# 2) Estandarización (z-score) — tal como ya venías haciendo
+scaler = StandardScaler()
+agg_scaled = pd.DataFrame(
+    scaler.fit_transform(agg[num_cols]),
+    columns=num_cols,
+    index=agg.index
+)
+
+# 3) Medias por cluster en escala estandarizada
+cluster_stats_std = (
+    agg_scaled.join(agg["cluster"])
+    .groupby("cluster")
+    .mean()
+)
+
+# 4) Orden de columnas según tu importancia (desc)
+ordered_vars = sorted(available_vars, key=lambda v: importance[v], reverse=True)
+
+# 5) Tabla principal: perfiles de cluster (z-scores)
+cluster_profile = cluster_stats_std[ordered_vars].copy()
+
+```
+
+
+
+## Analysis Step
+
+Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+# 8) Estilizado de la tabla principal para visualización clara
+#    - Gradiente rojo/azul centrado en 0
+
+Z_THRESHOLD = 1.0
+
+def highlight_strong(v, thr=Z_THRESHOLD):
+    if pd.isna(v):
+        return ""
+    return "font-weight: bold;" if abs(v) >= thr else ""
+
+# Ajusta el rango para que se vea bien centrado (z-scores)
+zmin, zmax = -2, 2  # puedes ampliar a (-3, 3) si hay valores extremos
+
+styler = (
+    cluster_profile.style
+    .background_gradient(cmap="coolwarm", axis=None, vmin=zmin, vmax=zmax)
+    .map(highlight_strong)
+    .format("{:.2f}")
+    .set_caption("Perfiles de cluster (z-scores estandarizados) — columnas ordenadas por importancia")
+)
+
+styler
+
+```
+
+
+
+## Principal Component Analysis (PCA)
+
+We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). 
+Interpreting **PC1** and **PC2** helps summarize broad market/demographic/POI gradients. 
+Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.
+
+```{python}
+#| eval: true
+#| echo: true
+#| include: true
+import geopandas as gpd
+
+zcta = gpd.read_file("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/MLpositron/data/Shapefiles/tl_2020_us_zcta520.shp")
+
+zcta.head()
+
+#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.
+df_map = pca_df[["zipcode", "cluster","city"]].drop_duplicates()
+
+#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear
+df_map["zipcode_str"] = df_map["zipcode"].astype(str).str.zfill(5)
+
+#renombramos la variable para que tengan el mismo nombre en ambos datframes.
+zcta = zcta.rename(columns={"ZCTA5CE20": "zipcode_str"})
+
+#mergeamos para tenerlo en una sola BBDD
+gdf = zcta.merge(df_map, on="zipcode_str", how="left")
+
+
+gdf.plot(column="cluster", categorical=True, legend=True, figsize=(12,8))
+
+```
+
+
+
+## Analysis Step
+
+Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
+
+```{python}
+# Filtrar por una ciudad
+ciudad = "NY"  # cámbialo por el nombre de la ciudad que te interese
+gdf_city = gdf[gdf["city"] == ciudad].copy()
+
+# Revisar cuántos clusters hay dentro de esa ciudad
+print(gdf_city["cluster"].value_counts())
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(10, 8))
+gdf_city.plot(column="cluster", categorical=True, legend=True, cmap="Set2", ax=ax)
+ax.set_title(f"Clusters en {ciudad}", fontsize=14)
+ax.axis("off")
+plt.show()
+
+```
+
+
+
+## Analysis Step
+
+Below we execute the corresponding step and display intermediate outputs for inspection and traceability.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+import contextily as ctx
+
+# Proyectar a Web Mercator (necesario para tiles de contexto)
+gdf_city_web = gdf_city.to_crs(epsg=3857)
+
+fig, ax = plt.subplots(figsize=(10, 8))
+gdf_city_web.plot(column="cluster", categorical=True, legend=True, cmap="Set2", ax=ax, alpha=0.8)
+ctx.add_basemap(ax, source="CartoDB.Positron")
+ax.set_title(f"Clusters en {ciudad}", fontsize=14)
+ax.axis("off")
+plt.show()
+
+```
+
+
+
+## Geospatial Visualization of Clusters
+
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
+This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+# ============================
+# MAPA DE CLUSTERS POR CIUDAD
+# ============================
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import contextily as ctx
+
+def plot_city_clusters(
+    gdf,
+    ciudad,
+    city_col="city",          # cambia si tu columna se llama distinto (ej. "municipio")
+    cluster_col="cluster",
+    zoom_method="factor",     # "factor" o "radius"
+    zoom_factor=0.35,         # si zoom_method="factor": 0.9 poco zoom, 0.35 zoom fuerte
+    radius_km=25,             # si zoom_method="radius": radio alrededor del centro
+    figsize=(10, 8),
+    cmap="Set2",
+    basemap="CartoDB.Positron",
+    edgecolor="black",
+    linewidth=0.3,
+    alpha=0.85,
+    title_prefix="Clusters en "
+):
+    # 1) Filtrar ciudad
+    gdf_city = gdf[gdf[city_col] == ciudad].copy()
+    if gdf_city.empty:
+        raise ValueError(f"No hay geometrías para '{ciudad}' en {city_col}.")
+
+    # 2) Asegurar CRS Web Mercator para el basemap
+    gdf_city_web = gdf_city.to_crs(epsg=3857)
+
+    # 3) Plot base
+    fig, ax = plt.subplots(figsize=figsize)
+    gdf_city_web.plot(
+        column=cluster_col,
+        categorical=True,
+        legend=True,
+        cmap=cmap,
+        ax=ax,
+        alpha=alpha,
+        edgecolor=edgecolor,
+        linewidth=linewidth
+    )
+
+    # 4) Basemap
+    ctx.add_basemap(ax, source=basemap)
+
+    # 5) ZOOM
+    if zoom_method == "factor":
+        # Zoom relativo a la extensión de la ciudad
+        minx, miny, maxx, maxy = gdf_city_web.total_bounds
+        x_margin = (maxx - minx) * (1 - zoom_factor) / 2
+        y_margin = (maxy - miny) * (1 - zoom_factor) / 2
+        ax.set_xlim(minx + x_margin, maxx - x_margin)
+        ax.set_ylim(miny + y_margin, maxy - y_margin)
+    elif zoom_method == "radius":
+        # Zoom por centro geométrico + radio en km
+        center = gdf_city_web.unary_union.centroid
+        x, y = center.x, center.y
+        buffer = radius_km * 1000
+        ax.set_xlim(x - buffer, x + buffer)
+        ax.set_ylim(y - buffer, y + buffer)
+    else:
+        raise ValueError("zoom_method debe ser 'factor' o 'radius'.")
+
+    # 6) Estética final
+    ax.set_title(f"{title_prefix}{ciudad}", fontsize=16)
+    ax.axis("off")
+    plt.tight_layout()
+    plt.show()
+
+
+
+plot_city_clusters(
+    gdf,
+    ciudad="NY",
+    city_col="city",          # cambia si tu columna se llama distinto
+    cluster_col="cluster",
+    zoom_method="factor",
+    zoom_factor=0.35          # baja a 0.25 si quieres aún más zoom
+)
+
+```
+
+
+
+## Geospatial Visualization of Clusters
+
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
+This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import contextily as ctx
+from shapely.geometry import Point
+import pyproj
+
+# === Parámetros de entrada ===
+ciudad = "NY"  # tu filtro de ciudad
+city_col = "city"
+cluster_col = "cluster"
+
+# === Filtrar la ciudad y convertir a Web Mercator ===
+gdf_city = gdf[gdf[city_col] == ciudad].copy()
+gdf_city_web = gdf_city.to_crs(epsg=3857)
+
+# === Crear el plot ===
+fig, ax = plt.subplots(figsize=(10, 8))
+gdf_city_web.plot(
+    column=cluster_col,
+    categorical=True,
+    legend=True,
+    cmap="Set2",
+    ax=ax,
+    alpha=0.85,
+    edgecolor="black",
+    linewidth=0.3
+)
+
+# === Añadir basemap ===
+ctx.add_basemap(ax, source="CartoDB.Positron")
+
+# === ZOOM CENTRADO MANUALMENTE (NYC core) ===
+# Coordenadas aproximadas de Manhattan (EPSG:4326 → luego se convierte)
+lon, lat = -73.97, 40.75  # centro aproximado de Manhattan
+radius_km = 25            # tamaño de zoom (20–30 km funciona bien)
+
+# Convertir a EPSG:3857
+proj = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+x, y = proj.transform(lon, lat)
+
+buffer = radius_km * 1000
+ax.set_xlim(x - buffer, x + buffer)
+ax.set_ylim(y - buffer, y + buffer)
+
+# === Estética final ===
+ax.set_title(f"Clusters en {ciudad}", fontsize=16)
+ax.axis("off")
+plt.tight_layout()
+plt.show()
+
+```
+
+
+
+## Geospatial Visualization of Clusters
+
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
+This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+
+```{python}
+#| eval: true
+#| echo: false
+#| include: true
+
+# ==============================
+# MAPA de NY por CLUSTERS con zoom interactivo
+# ==============================
+
+import geopandas as gpd
+
+ciudad = "NY"          # cambia si quieres otra
+city_col = "city"      # cambia si tu columna se llama distinto
+cluster_col = "cluster"
+
+# Filtra y pasa a lat/lon (WGS84) para web
+gdf_city = gdf[gdf[city_col] == ciudad].to_crs(epsg=4326)
+
+m = gdf_city.explore(
+    column=cluster_col,          # colorea por cluster
+    categorical=True,
+    cmap="Set2",
+    tiles="CartoDB positron",    # mapa base
+    legend=True                  # leyenda de clusters
+    # sin tooltip ni popup
+)
+
+m.save("mapa_clusters_interactivo.html")
+print("Mapa interactivo guardado en 'mapa_clusters_interactivo.html'")
+
+```
+
+
+
+## Geospatial Visualization of Clusters
+
+We project clustered locations into a geographic map and render an **interactive HTML** (CartoDB tiles) where each ZIP/city is colored by cluster. 
+This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.
+
+```{python}
+#| eval: false
+#| include: true
+gdf_w = gdf.to_crs(epsg=4326)
+
+mG = gdf_w.explore(
+    column="cluster",
+    categorical=True,
+    cmap="Set2",
+    tiles="CartoDB positron",
+    legend=True
+)
+
+mG.save("mapa_clusters_interactivo_global.html")
+print("Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'")
+
+```
+
+
+
+# Conclusions and Next Steps
+
+- **Latent structure:** PCA reveals a small number of components explaining most cross-location variability, mixing market intensity and contextual features.
+- **Market segments:** K-Means uncovers distinct clusters with coherent profiles—useful for benchmarking cities/ZIPs and tracking structural differences over time.
+- **Spatial logic:** The interactive map highlights regional patterns and outliers, aiding exploratory policy or investment insights.
+
+**Future extensions** (optional):
+- Time-aware clustering or dynamic PCA by year.
+- Dashboarding (e.g., Streamlit/Panel) for per-city drill-down.
+- Additional validation via stability checks and alternative clustering methods.
