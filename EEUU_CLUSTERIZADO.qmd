@@ -15,15 +15,13 @@ editor: visual
 
 Este informe presenta una segmentación del mercado inmobiliario estadounidense basada en datos a nivel de **código postal/ciudad**. Combinamos indicadores de vivienda (p. ej., precio medio de venta/listado, inventario, días en el mercado) con puntos de interés (POI) de OSM y datos demográficos. Nuestro flujo de trabajo se centra en la estandarización, la reducción de dimensionalidad (**PCA**), la agrupación (**K-Means**) y la visualización geoespacial. Mantenemos el código sin cambios y priorizamos una interpretación clara y reproducible de cada paso.
 
-Preguntas clave que abordamos: - _¿Qué dimensiones latentes resumen mejor la variación entre ubicaciones?_ - _¿Cuántos segmentos de mercado (clústeres) distintos emergen?_ - _¿Qué caracteriza a cada clúster en términos de señales de mercado, POI y datos demográficos?_ - _¿Dónde se ubican geográficamente estos clústeres?_
+Preguntas clave que abordamos: - *¿Qué dimensiones latentes resumen mejor la variación entre ubicaciones?* - *¿Cuántos segmentos de mercado (clústeres) distintos emergen?* - *¿Qué caracteriza a cada clúster en términos de señales de mercado, POI y datos demográficos?* - *¿Dónde se ubican geográficamente estos clústeres?*
 
->Nota: Este documento no incluye predicción supervisada de precios. El énfasis está en el descubrimiento e interpretación de la estructura. Pero sería una buena actualización para el proyecto en el futuro. 
+> Nota: Este documento no incluye predicción supervisada de precios. El énfasis está en el descubrimiento e interpretación de la estructura. Pero sería una buena actualización para el proyecto en el futuro.
 
 ## Carga de datos
 
-Empezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor.
-_Este es el link del dataset:_ https://www.kaggle.com/datasets/shengkunwang/housets-dataset
-
+Empezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor. *Este es el link del dataset:* https://www.kaggle.com/datasets/shengkunwang/housets-dataset
 
 ```{python}
 #| echo: false
@@ -31,7 +29,7 @@ _Este es el link del dataset:_ https://www.kaggle.com/datasets/shengkunwang/hous
 import pandas as pd
 
 # 1) Cargar datos
-df = pd.read_csv("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/MLpositron/data/HouseTS.csv")
+df = pd.read_csv("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/HouseTS.csv")
 
 df.head()
 df.info()
@@ -40,9 +38,9 @@ df.describe(include='all')
 
 Como este proyecto lo estamos realizado a través de positron visualizamos en el propio IDE el dataset y vemos que el porcentaje de datos missing es 0 para todas las variables. Es un dataset limpio y listo para analizar.
 
-# Análisis de componentes principales (PCA) 
+# Análisis de componentes principales (PCA)
 
-Aplicamos **PCA** para capturar la variación dominante entre ubicaciones, reteniendo una proporción predefinida de varianza explicada del **90%**. 
+Aplicamos **PCA** para capturar la variación dominante entre ubicaciones, reteniendo una proporción predefinida de varianza explicada del **90%**.
 
 ```{python}
 #| eval: true
@@ -102,7 +100,7 @@ print("Varianza explicada por componente:", explained)
 print("Varianza explicada acumulada:", cum_explained)
 ```
 
-Ahora vamos a visualizar la interpretación de PC1 y PC2. Esto nos ayuda a resumir los gradientes generales de mercado, demográficos y de puntos de interés. 
+Ahora vamos a visualizar la interpretación de PC1 y PC2. Esto nos ayuda a resumir los gradientes generales de mercado, demográficos y de puntos de interés.
 
 ```{python}
 #| eval: true
@@ -374,7 +372,7 @@ La cartografía la obtenemos del census estadounidense aquí: https://www.census
 #| include: true
 import geopandas as gpd
 
-zcta = gpd.read_file("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/MLpositron/data/Shapefiles/tl_2020_us_zcta520.shp")
+zcta = gpd.read_file("C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp")
 
 zcta.head()
 
