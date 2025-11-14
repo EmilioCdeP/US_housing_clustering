@@ -1,4 +1,4 @@
-# 🏠 Análisis del Mercado Inmobiliario en Estados Unidos
+# 🏠 Análisis del Mercado Inmobiliario en Estados Unidos (SIN FINAIZAR)
 
 > Proyecto de análisis y segmentación del mercado inmobiliario estadounidense por códigos postales y ciudades mediante **PCA + K-Means**, con perfiles de clusters e interpretación de variables socioeconómicas y de puntos de interés (POIs).
 
