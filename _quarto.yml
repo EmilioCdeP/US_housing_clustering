@@ -1,20 +1,22 @@
 project:
   type: website
+  output-dir: docs
 
 website:
-  title: "docs"
+  title: "Web para el análisis de clusterización de viviendas en EEUU"
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - EEUU_CLUSTERIZADO.qmd
-      - us_housing_clustering.qmd
+        text: Inicio
+      - href: EEUU_CLUSTERIZADO.qmd
+        text: EEUU Clusterizado 
+#        href: us_housing_clustering.qmd ya lo pondré cuando esté listo.
+#        text: US Housing Clustering 
+      
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: cosmo
     css: styles.css
     toc: true
 
