@@ -2,6 +2,12 @@
 
 > Proyecto de análisis y segmentación del mercado inmobiliario estadounidense por códigos postales y ciudades mediante **PCA + K-Means**, con perfiles de clusters e interpretación de variables socioeconómicas y de puntos de interés (POIs).
 
+## 📄 Visualización del Proyecto
+
+Puedes ver el resultado final del análisis y la clusterización directamente en GitHub Pages en el siguiente enlace:
+
+👉 **[EEUU_CLUSTERIZADO.html](https://emiliocdep.github.io/US_housing_clustering/EEUU_CLUSTERIZADO.html)**
+
 ---
 
 ## 📘 Descripción
