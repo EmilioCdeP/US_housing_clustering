@@ -158,27 +158,34 @@
     "href": "EEUU_CLUSTERIZADO.html#visualizaciones-geoespaciales-con-geopandas.",
     "title": "Análisis del mercado inmobiliario en Estados Unidos",
     "section": "Visualizaciones Geoespaciales con geopandas.",
-    "text": "Visualizaciones Geoespaciales con geopandas.\nLa cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nLectura de los datos geoespaciales.\n\nimport geopandas as gpd\n\nzcta = gpd.read_file(\"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp\")\n\nzcta.head()\n\n#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.\ndf_map = pca_df[[\"zipcode\", \"cluster\",\"city\"]].drop_duplicates()\n\n#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear\ndf_map[\"zipcode_str\"] = df_map[\"zipcode\"].astype(str).str.zfill(5)\n\n#renombramos la variable para que tengan el mismo nombre en ambos datframes.\nzcta = zcta.rename(columns={\"ZCTA5CE20\": \"zipcode_str\"})\n\n#mergeamos para tenerlo en una sola BBDD\ngdf = zcta.merge(df_map, on=\"zipcode_str\", how=\"left\")\n\n\ngdf.plot(column=\"cluster\", categorical=True, legend=True, figsize=(12,8))\n\n\n\n\n\n\n\n\n\n# Filtrar por una ciudad\nciudad = \"NY\"  # cámbialo por el nombre de la ciudad que te interese\ngdf_city = gdf[gdf[\"city\"] == ciudad].copy()\n\n# Revisar cuántos clusters hay dentro de esa ciudad\nprint(gdf_city[\"cluster\"].value_counts())\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(10, 8))\ngdf_city.plot(column=\"cluster\", categorical=True, legend=True, cmap=\"Set2\", ax=ax)\nax.set_title(f\"Clusters en {ciudad}\", fontsize=14)\nax.axis(\"off\")\nplt.show()\n\ncluster\n0.0    535\n3.0    109\n2.0     93\n1.0     92\nName: count, dtype: int64\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLe incorporamos zoom para poder verlo desde más cerca.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMapa interactivo guardado en 'mapa_clusters_interactivo.html'\n\n\n\ngdf_w = gdf.to_crs(epsg=4326)\n\nmG = gdf_w.explore(\n    column=\"cluster\",\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",\n    legend=True\n)\n\nmG.save(\"mapa_clusters_interactivo_global.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'\")"
+    "text": "Visualizaciones Geoespaciales con geopandas.\nLa cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nLectura de los datos geoespaciales.\n\nimport geopandas as gpd\n\nzcta = gpd.read_file(\"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp\")\n\nzcta.head()\n\n#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.\ndf_map = pca_df[[\"zipcode\", \"cluster\",\"city\"]].drop_duplicates()\n\n#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear\ndf_map[\"zipcode_str\"] = df_map[\"zipcode\"].astype(str).str.zfill(5)\n\n#renombramos la variable para que tengan el mismo nombre en ambos datframes.\nzcta = zcta.rename(columns={\"ZCTA5CE20\": \"zipcode_str\"})\n\n#mergeamos para tenerlo en una sola BBDD\ngdf = zcta.merge(df_map, on=\"zipcode_str\", how=\"left\")\n\n\ngdf.plot(column=\"cluster\", categorical=True, legend=True, figsize=(12,8))\n\n\n\n\n\n\n\n\n\n# Filtrar por una ciudad\nciudad = \"NY\"  # cámbialo por el nombre de la ciudad que te interese\ngdf_city = gdf[gdf[\"city\"] == ciudad].copy()\n\n# Revisar cuántos clusters hay dentro de esa ciudad\nprint(gdf_city[\"cluster\"].value_counts())\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(10, 8))\ngdf_city.plot(column=\"cluster\", categorical=True, legend=True, cmap=\"Set2\", ax=ax)\nax.set_title(f\"Clusters en {ciudad}\", fontsize=14)\nax.axis(\"off\")\nplt.show()\n\ncluster\n0.0    535\n3.0    109\n2.0     93\n1.0     92\nName: count, dtype: int64\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLe incorporamos zoom para poder verlo desde más cerca.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# ==============================\n# MAPA de NY por CLUSTERS con zoom interactivo\n# ==============================\n\nimport geopandas as gpd\n\nciudad = \"NY\"          # cambia si quieres otra\ncity_col = \"city\"      # cambia si tu columna se llama distinto\ncluster_col = \"cluster\"\n\n# Filtra y pasa a lat/lon (WGS84) para web\ngdf_city = gdf[gdf[city_col] == ciudad].to_crs(epsg=4326)\n\nm = gdf_city.explore(\n    column=cluster_col,          # colorea por cluster\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",    # mapa base\n    legend=True                  # leyenda de clusters\n    # sin tooltip ni popup\n)\n\nm.save(\"mapa_clusters_interactivo.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo.html'\")\n\nMapa interactivo guardado en 'mapa_clusters_interactivo.html'"
   },
   {
     "objectID": "EEUU_CLUSTERIZADO.html#mapa-interactivo-de-ny.",
     "href": "EEUU_CLUSTERIZADO.html#mapa-interactivo-de-ny.",
     "title": "Análisis del mercado inmobiliario en Estados Unidos",
     "section": "Mapa interactivo de NY.",
-    "text": "Mapa interactivo de NY."
-  },
-  {
-    "objectID": "EEUU_CLUSTERIZADO.html#molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo",
-    "href": "EEUU_CLUSTERIZADO.html#molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo",
-    "title": "Análisis del mercado inmobiliario en Estados Unidos",
-    "section": "(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)",
-    "text": "(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)"
+    "text": "Mapa interactivo de NY.\n(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)\n\n\n\n# ==============================\n# ESTE SERÍA EL CÓDIGO A AJECUTAR SI QUIERES VISUALIZAR TODAS LAS CIUDADES EN UN MAPA\n# QUE MI PC NO PUEDE RENDERIZARLO.\ngdf_w = gdf.to_crs(epsg=4326)\n\nmG = gdf_w.explore(\n    column=\"cluster\",\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",\n    legend=True\n)\n\nmG.save(\"mapa_clusters_interactivo_global.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'\")"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "docs",
+    "title": "US Housing Clustering",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+    "text": "Análisis exploratorio y clusterización del mercado inmobiliario de Estados Unidos, acompañado de visualizaciones interactivas y un mapa dinámico basado en datos geoespaciales."
+  },
+  {
+    "objectID": "index.html#accesos-directos",
+    "href": "index.html#accesos-directos",
+    "title": "US Housing Clustering",
+    "section": "🔍 Accesos directos",
+    "text": "🔍 Accesos directos\n\n\n📊 Análisis completo\nExplora metodologías, gráficos, clusterización, conclusiones y todo el flujo del proyecto.\n👉 Abrir análisis\n\n\n🗺️ Mapa interactivo de NY\nVisualiza los clusters geográficos mediante un mapa dinámico generado con GeoPandas+Folium.\n👉 Ver mapa\n\n\n🏠 ¿Qué es este proyecto?\nEl objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:\n\n✔️ Limpieza y preparación de datos\n\n✔️ Técnicas de clusterización\n✔️ Visualizaciones estadísticas y geoespaciales\n\n✔️ Mapas interactivos basados en coordenadas reales"
+  },
+  {
+    "objectID": "index.html#qué-es-este-proyecto",
+    "href": "index.html#qué-es-este-proyecto",
+    "title": "US Housing Clustering",
+    "section": "🏠 ¿Qué es este proyecto?",
+    "text": "🏠 ¿Qué es este proyecto?\nEl objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:\n\n✔️ Limpieza y preparación de datos\n\n✔️ Técnicas de clusterización\n✔️ Visualizaciones estadísticas y geoespaciales\n\n✔️ Mapas interactivos basados en coordenadas reales"
   }
 ]

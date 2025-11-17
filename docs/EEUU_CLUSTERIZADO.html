@@ -8,7 +8,7 @@
 
 <meta name="author" content="Emilio Coronado de Palma">
 
-<title>Análisis del mercado inmobiliario en Estados Unidos – Web para el análisis de clusterización de viviendas en EEUU</title>
+<title>Análisis del mercado inmobiliario en Estados Unidos – Proyecto Clusterización vivienda EEUU</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -119,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Web para el análisis de clusterización de viviendas en EEUU</span>
+    <span class="navbar-title">Proyecto Clusterización vivienda EEUU</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -159,7 +159,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#visualizaciones-geoespaciales-con-geopandas." id="toc-visualizaciones-geoespaciales-con-geopandas." class="nav-link" data-scroll-target="#visualizaciones-geoespaciales-con-geopandas.">Visualizaciones Geoespaciales con geopandas.</a></li>
   <li><a href="#mapa-interactivo-de-ny." id="toc-mapa-interactivo-de-ny." class="nav-link" data-scroll-target="#mapa-interactivo-de-ny.">Mapa interactivo de NY.</a></li>
-  <li><a href="#molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo" id="toc-molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo" class="nav-link" data-scroll-target="#molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo">(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -214,7 +213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="análisis-de-componentes-principales-pca" class="level1">
 <h1>Análisis de componentes principales (PCA)</h1>
 <p>Aplicamos <strong>PCA</strong> para capturar la variación dominante entre ubicaciones, reteniendo una proporción predefinida de varianza explicada del <strong>90%</strong>.</p>
-<div id="4a83262f" class="cell" data-execution_count="2">
+<div id="07de3dcd" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Número de componentes principales: 9
 Varianza explicada por componente: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308
@@ -224,7 +223,7 @@ Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.804
 </div>
 </div>
 <p>Ahora vamos a visualizar la interpretación de PC1 y PC2. Esto nos ayuda a resumir los gradientes generales de mercado, demográficos y de puntos de interés.</p>
-<div id="10ece449" class="cell" data-execution_count="3">
+<div id="be01f614" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(pca_df[<span class="st">"PC1"</span>], pca_df[<span class="st">"PC2"</span>], s<span class="op">=</span><span class="dv">8</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"PC1"</span>)</span>
@@ -243,7 +242,7 @@ Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.804
 </section>
 <section id="clusterización-con-k-means" class="level1">
 <h1>Clusterización con k-means</h1>
-<div id="5c087cba" class="cell" data-execution_count="4">
+<div id="0406784c" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>k con mejor silueta: 4</code></pre>
 </div>
@@ -257,7 +256,7 @@ Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.804
 </div>
 <p>Ahora ya visualizamos muy bien cómo se distribuyen estos clusters en función de la PC1 y la PC2.</p>
 <p>Ahora vamos a graficar una tabla para entender estos clusters mejor. Pero primero tenemos que entender qué variables son las que más información nos dan. Por tanto medimos la varianza entre los clusters y obtenemos la lista de variables que mayor varianza dan.</p>
-<div id="9b06261c" class="cell" data-execution_count="5">
+<div id="e02874b3" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>station                    6.292687
 restaurant                 6.033795
@@ -315,7 +314,7 @@ dtype: float64</code></pre>
 <p>La cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&amp;layergroup=ZIP%20Code%20Tabulation%20Areas</p>
 <section id="lectura-de-los-datos-geoespaciales." class="level4">
 <h4 class="anchored" data-anchor-id="lectura-de-los-datos-geoespaciales.">Lectura de los datos geoespaciales.</h4>
-<div id="f0d9bc24" class="cell" data-execution_count="7">
+<div id="6988f675" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>zcta <span class="op">=</span> gpd.read_file(<span class="st">"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp"</span>)</span>
@@ -344,7 +343,7 @@ dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div id="ba262a2f" class="cell" data-execution_count="8">
+<div id="6195b3d5" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar por una ciudad</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ciudad <span class="op">=</span> <span class="st">"NY"</span>  <span class="co"># cámbialo por el nombre de la ciudad que te interese</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>gdf_city <span class="op">=</span> gdf[gdf[<span class="st">"city"</span>] <span class="op">==</span> ciudad].copy()</span>
@@ -375,7 +374,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="2347cf08" class="cell" data-execution_count="9">
+<div id="504148fd" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -385,7 +384,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 <p>Le incorporamos zoom para poder verlo desde más cerca.</p>
-<div id="88561b1b" class="cell" data-execution_count="10">
+<div id="69e0ca69" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -394,7 +393,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="45785b76" class="cell" data-execution_count="11">
+<div id="b21495fd" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -403,34 +402,59 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="738b9b23" class="cell" data-execution_count="12">
+<div id="57324799" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># MAPA de NY por CLUSTERS con zoom interactivo</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ciudad <span class="op">=</span> <span class="st">"NY"</span>          <span class="co"># cambia si quieres otra</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>city_col <span class="op">=</span> <span class="st">"city"</span>      <span class="co"># cambia si tu columna se llama distinto</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>cluster_col <span class="op">=</span> <span class="st">"cluster"</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtra y pasa a lat/lon (WGS84) para web</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>gdf_city <span class="op">=</span> gdf[gdf[city_col] <span class="op">==</span> ciudad].to_crs(epsg<span class="op">=</span><span class="dv">4326</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> gdf_city.explore(</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    column<span class="op">=</span>cluster_col,          <span class="co"># colorea por cluster</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    categorical<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span><span class="st">"Set2"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    tiles<span class="op">=</span><span class="st">"CartoDB positron"</span>,    <span class="co"># mapa base</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    legend<span class="op">=</span><span class="va">True</span>                  <span class="co"># leyenda de clusters</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sin tooltip ni popup</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>m.save(<span class="st">"mapa_clusters_interactivo.html"</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mapa interactivo guardado en 'mapa_clusters_interactivo.html'"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Mapa interactivo guardado en 'mapa_clusters_interactivo.html'</code></pre>
 </div>
-</div>
-<div id="092b3ed1" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gdf_w <span class="op">=</span> gdf.to_crs(epsg<span class="op">=</span><span class="dv">4326</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>mG <span class="op">=</span> gdf_w.explore(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    column<span class="op">=</span><span class="st">"cluster"</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    categorical<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span><span class="st">"Set2"</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    tiles<span class="op">=</span><span class="st">"CartoDB positron"</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    legend<span class="op">=</span><span class="va">True</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>mG.save(<span class="st">"mapa_clusters_interactivo_global.html"</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="mapa-interactivo-de-ny." class="level2">
 <h2 class="anchored" data-anchor-id="mapa-interactivo-de-ny.">Mapa interactivo de NY.</h2>
-</section>
-<section id="molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo" class="level2">
-<h2 class="anchored" data-anchor-id="molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo">(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)</h2>
-<iframe src="mapa_clusters_interactivo_global.html" width="100%" height="600px" style="border:none;">
+<p>(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)</p>
+<iframe src="mapa_clusters_interactivo.html" width="100%" height="600px" style="border:none;">
 </iframe>
+<div id="02e176f9" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ESTE SERÍA EL CÓDIGO A AJECUTAR SI QUIERES VISUALIZAR TODAS LAS CIUDADES EN UN MAPA</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># QUE MI PC NO PUEDE RENDERIZARLO.</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>gdf_w <span class="op">=</span> gdf.to_crs(epsg<span class="op">=</span><span class="dv">4326</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>mG <span class="op">=</span> gdf_w.explore(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    column<span class="op">=</span><span class="st">"cluster"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    categorical<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">=</span><span class="st">"Set2"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    tiles<span class="op">=</span><span class="st">"CartoDB positron"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    legend<span class="op">=</span><span class="va">True</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>mG.save(<span class="st">"mapa_clusters_interactivo_global.html"</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>

@@ -1,7 +1,97 @@
 ---
-title: "docs"
+title: "US Housing Clustering"
+format:
+  html:
+    toc: false
+    page-layout: full
 ---
 
-This is a Quarto website.
+<style>
+.hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: #eef2f7;
+  border-radius: 16px;
+  margin-bottom: 3rem;
+}
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+.hero p {
+  font-size: 1.25rem;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto;
+}
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  border-radius: 14px;
+  padding: 1.5rem;
+  background: white;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.card a {
+  text-decoration: none;
+  color: #1f65b6;
+  font-weight: 600;
+}
+.card a:hover {
+  text-decoration: underline;
+}
+</style>
+
+<div class="hero">
+  <h1>US Housing Clustering</h1>
+  <p>
+    Análisis exploratorio y clusterización del mercado inmobiliario de Estados Unidos,
+    acompañado de visualizaciones interactivas y un mapa dinámico basado en datos geoespaciales.
+  </p>
+</div>
+
+## 🔍 Accesos directos
+
+<div class="card-grid">
+
+<div class="card">
+### 📊 Análisis completo
+Explora metodologías, gráficos, clusterización, conclusiones y todo el flujo del proyecto.
+  
+👉 [Abrir análisis](EEUU_CLUSTERIZADO.qmd)
+</div>
+
+<div class="card">
+### 🗺️ Mapa interactivo de NY
+Visualiza los clusters geográficos mediante un mapa dinámico generado con GeoPandas+Folium.
+  
+👉 [Ver mapa](mapa_clusters_interactivo.html)
+
+
+</div>
+
+## 🏠 ¿Qué es este proyecto?
+
+El objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:
+
+- ✔️ Limpieza y preparación de datos  
+- ✔️ Técnicas de clusterización 
+- ✔️ Visualizaciones estadísticas y geoespaciales  
+- ✔️ Mapas interactivos basados en coordenadas reales  

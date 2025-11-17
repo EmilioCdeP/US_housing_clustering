@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>docs – Web para el análisis de clusterización de viviendas en EEUU</title>
+<title>US Housing Clustering – Proyecto Clusterización vivienda EEUU</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -80,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Web para el análisis de clusterización de viviendas en EEUU</span>
+    <span class="navbar-title">Proyecto Clusterización vivienda EEUU</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -105,23 +105,21 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">docs</h1>
+<h1 class="title">US Housing Clustering</h1>
 </div>
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page">
 
     
   
@@ -133,10 +131,95 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is a Quarto website.</p>
-<p>To learn more about Quarto websites visit <a href="https://quarto.org/docs/websites" class="uri">https://quarto.org/docs/websites</a>.</p>
+<style>
+.hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: #eef2f7;
+  border-radius: 16px;
+  margin-bottom: 3rem;
+}
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+.hero p {
+  font-size: 1.25rem;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  border-radius: 14px;
+  padding: 1.5rem;
+  background: white;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.card a {
+  text-decoration: none;
+  color: #1f65b6;
+  font-weight: 600;
+}
+.card a:hover {
+  text-decoration: underline;
+}
+</style>
+<div class="hero">
+<h1>
+US Housing Clustering
+</h1>
+<p>
+Análisis exploratorio y clusterización del mercado inmobiliario de Estados Unidos, acompañado de visualizaciones interactivas y un mapa dinámico basado en datos geoespaciales.
+</p>
+</div>
+<section id="accesos-directos" class="level2">
+<h2 class="anchored" data-anchor-id="accesos-directos">🔍 Accesos directos</h2>
+<div class="card-grid">
+<section id="análisis-completo" class="level3 card">
+<h3 class="anchored" data-anchor-id="análisis-completo">📊 Análisis completo</h3>
+<p>Explora metodologías, gráficos, clusterización, conclusiones y todo el flujo del proyecto.</p>
+<p>👉 <a href="./EEUU_CLUSTERIZADO.html">Abrir análisis</a></p>
+</section>
+<section id="mapa-interactivo-de-ny" class="level3 card">
+<h3 class="anchored" data-anchor-id="mapa-interactivo-de-ny">🗺️ Mapa interactivo de NY</h3>
+<p>Visualiza los clusters geográficos mediante un mapa dinámico generado con GeoPandas+Folium.</p>
+<p>👉 <a href="mapa_clusters_interactivo.html">Ver mapa</a></p>
+</section>
+<section id="qué-es-este-proyecto" class="level2">
+<h2 class="anchored" data-anchor-id="qué-es-este-proyecto">🏠 ¿Qué es este proyecto?</h2>
+<p>El objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:</p>
+<ul>
+<li>✔️ Limpieza y preparación de datos<br>
+</li>
+<li>✔️ Técnicas de clusterización</li>
+<li>✔️ Visualizaciones estadísticas y geoespaciales<br>
+</li>
+<li>✔️ Mapas interactivos basados en coordenadas reales</li>
+</ul>
 
 
+</section>
+</div>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
