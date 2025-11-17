@@ -6,7 +6,7 @@
 
 You can view the final analysis and clustering results directly on GitHub Pages at the following link:
 
-👉 **[US_CLUSTERING.html](https://emiliocdep.github.io/US_housing_clustering/US_CLUSTERING.html)**
+👉 **[US_CLUSTERING.html]([https://emiliocdep.github.io/US_housing_clustering/US_CLUSTERING.html](https://emiliocdep.github.io/US_housing_clustering/))**
 
 ---
 
