@@ -56,6 +56,10 @@ This repository examines patterns in the U.S. real estate market by combining ho
 
 ---
 
+> The data folder is not included in the repository because the files exceed GitHub’s size limits. However, the project is 100% reproducible, and all steps to download and prepare the data are fully documented.
+
+---
+
 ## 🚀 How to reproduce
 1. Clone the repository and create the environment (e.g., using conda or venv).  
 2. Install main dependencies:
