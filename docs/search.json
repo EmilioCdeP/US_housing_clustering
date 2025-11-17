@@ -1,136 +1,38 @@
 [
   {
-    "objectID": "us_housing_clustering.html",
-    "href": "us_housing_clustering.html",
-    "title": "US Housing Market Clustering & PCA",
+    "objectID": "US_CLUSTERING.html",
+    "href": "US_CLUSTERING.html",
+    "title": "Real Estate Market Analysis in the United States",
     "section": "",
-    "text": "This report presents a data-driven segmentation of the US housing market at ZIP/city level. We combine housing indicators (e.g., median sale/list prices, inventory, DOM) with points of interest (POIs) from OSM and demographics from ACS/Census. Our workflow focuses on standardization → dimensionality reduction (PCA) → clustering (K-Means) and geospatial visualization. We keep the code unchanged and emphasize clear, reproducible interpretation of each step.\nKey questions we address: - Which latent dimensions best summarize variation across locations? - How many distinct market segments (clusters) emerge? - What characterizes each cluster in terms of market signals, POIs, and demographics? - Where are these clusters located geographically?\n\nNote: This document does not include supervised price prediction. The emphasis is on structure discovery and interpretation.\n\n\n\nWe start by loading the main dataset from Kaggle (HousingTS) and merging auxiliary features when available (POI counts from OSM and ACS/Census demographics). We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-dependent features can be aggregated at the desired granularity.\n\n\n\nBelow we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n\n\nBelow we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n\n\nWe apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\n\n[0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308\n 0.02503939 0.02146856 0.01447887]\n[0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393\n 0.87196332 0.89343188 0.90791075]\n\n\n\n\n\nWe evaluate candidate values of K (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.\n\n\nComponentes PCA: 9\nVarianza explicada por componente: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308\n 0.02503939 0.02146856 0.01447887]\nVarianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393\n 0.87196332 0.89343188 0.90791075]\n\n\n\n\n\nWe apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\nplt.figure(figsize=(8,6))\nplt.scatter(pca_df[\"PC1\"], pca_df[\"PC2\"], s=8, alpha=0.5)\nplt.xlabel(\"PC1\")\nplt.ylabel(\"PC2\")\nplt.title(\"Espacio PCA = PC1 vs PC2\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\nWe evaluate candidate values of K (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.\n\n\nk con mejor silueta: 4\n\n\n\n\n\n\n\n\n\n\n\n\nWe apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\n\n\nWe apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\n\nstation                    6.292687\nrestaurant                 6.033795\nsupermarket                5.931101\nbank                       5.798149\npark                       5.090172\nhospital                   4.288910\nschool                     3.899366\nmedian_list_ppsf           2.905003\nmedian_ppsf                2.526744\nbus                        2.178003\nMedian Home Value          1.285565\nprice                      1.164426\nmedian_sale_price          1.155048\nTotal Housing Units        0.807132\nmall                       0.791088\nmedian_list_price          0.729817\nTotal Labor Force          0.695403\nMedian Commute Time        0.679908\nPer Capita Income          0.656566\nTotal School Enrollment    0.654586\ndtype: float64\n\n\n\n\n\nBefore multivariate analysis, features are standardized using z-scores to place all variables on comparable scales. This is crucial for PCA and K-Means, which are sensitive to differences in units and magnitude.\n\n\n\nBelow we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n\n\n\n\n\n\nTable 1: Perfiles de cluster (z-scores estandarizados) — columnas ordenadas por importancia\n\n\n\n\n\n \nstation\nrestaurant\nsupermarket\nbank\npark\nhospital\nschool\nmedian_list_ppsf\nmedian_ppsf\nbus\nMedian Home Value\nprice\nmedian_sale_price\nTotal Housing Units\nmall\nmedian_list_price\nTotal Labor Force\nMedian Commute Time\nPer Capita Income\nTotal School Enrollment\n\n\ncluster\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n\n\n\n\n0\n-0.22\n-0.26\n-0.36\n-0.29\n-0.37\n-0.32\n-0.36\n-0.34\n-0.33\n-0.27\n-0.42\n-0.30\n-0.30\n-0.72\n-0.28\n-0.24\n-0.72\n-0.71\n-0.30\n-0.71\n\n\n1\n-0.07\n-0.08\n0.04\n-0.03\n0.06\n0.03\n0.11\n-0.20\n-0.18\n0.04\n-0.12\n-0.23\n-0.22\n0.98\n0.12\n-0.19\n1.00\n1.00\n-0.10\n1.01\n\n\n2\n4.96\n4.89\n4.86\n4.80\n4.51\n4.14\n3.95\n3.33\n3.09\n2.96\n1.70\n1.70\n1.69\n1.21\n1.77\n1.32\n0.98\n0.93\n1.15\n0.85\n\n\n3\n0.12\n0.34\n0.42\n0.35\n0.46\n0.42\n0.40\n1.26\n1.22\n0.41\n1.67\n1.50\n1.50\n-0.03\n0.45\n1.21\n-0.03\n-0.05\n1.24\n-0.07\n\n\n\n\n\n\n\n\n\n\n\nWe apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\nimport geopandas as gpd\n\nzcta = gpd.read_file(\"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp\")\n\nzcta.head()\n\n#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.\ndf_map = pca_df[[\"zipcode\", \"cluster\",\"city\"]].drop_duplicates()\n\n#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear\ndf_map[\"zipcode_str\"] = df_map[\"zipcode\"].astype(str).str.zfill(5)\n\n#renombramos la variable para que tengan el mismo nombre en ambos datframes.\nzcta = zcta.rename(columns={\"ZCTA5CE20\": \"zipcode_str\"})\n\n#mergeamos para tenerlo en una sola BBDD\ngdf = zcta.merge(df_map, on=\"zipcode_str\", how=\"left\")\n\n\ngdf.plot(column=\"cluster\", categorical=True, legend=True, figsize=(12,8))\n\n\n\n\n\n\n\n\n\n\n\nBelow we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n# Filtrar por una ciudad\nciudad = \"NY\"  # cámbialo por el nombre de la ciudad que te interese\ngdf_city = gdf[gdf[\"city\"] == ciudad].copy()\n\n# Revisar cuántos clusters hay dentro de esa ciudad\nprint(gdf_city[\"cluster\"].value_counts())\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(10, 8))\ngdf_city.plot(column=\"cluster\", categorical=True, legend=True, cmap=\"Set2\", ax=ax)\nax.set_title(f\"Clusters en {ciudad}\", fontsize=14)\nax.axis(\"off\")\nplt.show()\n\ncluster\n0.0    535\n3.0    109\n2.0     93\n1.0     92\nName: count, dtype: int64\n\n\n\n\n\n\n\n\n\n\n\n\nBelow we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n\n\n\n\n\n\n\n\n\n\n\nWe project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.\n\n\n\n\n\n\n\n\n\n\n\n\nWe project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.\n\n\n\n\n\n\n\n\n\n\n\n\nWe project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.\n\n\nMapa interactivo guardado en 'mapa_clusters_interactivo.html'\n\n\n\n\n\nWe project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.\n\ngdf_w = gdf.to_crs(epsg=4326)\n\nmG = gdf_w.explore(\n    column=\"cluster\",\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",\n    legend=True\n)\n\nmG.save(\"mapa_clusters_interactivo_global.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'\")"
+    "text": "This report presents a segmentation of the U.S. real estate market based on ZIP code- and city-level data. We combine housing indicators (e.g., median sale/list price, inventory, days on market) with points of interest (POI) from OSM and demographic variables. Our workflow focuses on standardization, dimensionality reduction (PCA), clustering (K-Means), and geospatial visualization. The code is kept unchanged, and we prioritize a clear and reproducible interpretation of each step.\nKey questions addressed: - Which latent dimensions best summarize the variation across locations? - How many distinct market segments (clusters) emerge? - What characterizes each cluster in terms of market signals, POIs, and demographic attributes? - Where are these clusters geographically located?\n\nNote: This document does not include supervised price prediction. The emphasis is on discovering and interpreting the underlying structure. However, it would be a valuable future extension of the project."
   },
   {
-    "objectID": "us_housing_clustering.html#data-sources-and-loading",
-    "href": "us_housing_clustering.html#data-sources-and-loading",
-    "title": "US Housing Market Clustering & PCA",
+    "objectID": "US_CLUSTERING.html#proyect-overview",
+    "href": "US_CLUSTERING.html#proyect-overview",
+    "title": "Real Estate Market Analysis in the United States",
     "section": "",
-    "text": "We start by loading the main dataset from Kaggle (HousingTS) and merging auxiliary features when available (POI counts from OSM and ACS/Census demographics). We ensure identifiers (e.g., ZIP/city, date) are consistent and that time-dependent features can be aggregated at the desired granularity."
+    "text": "This report presents a segmentation of the U.S. real estate market based on ZIP code- and city-level data. We combine housing indicators (e.g., median sale/list price, inventory, days on market) with points of interest (POI) from OSM and demographic variables. Our workflow focuses on standardization, dimensionality reduction (PCA), clustering (K-Means), and geospatial visualization. The code is kept unchanged, and we prioritize a clear and reproducible interpretation of each step.\nKey questions addressed: - Which latent dimensions best summarize the variation across locations? - How many distinct market segments (clusters) emerge? - What characterizes each cluster in terms of market signals, POIs, and demographic attributes? - Where are these clusters geographically located?\n\nNote: This document does not include supervised price prediction. The emphasis is on discovering and interpreting the underlying structure. However, it would be a valuable future extension of the project."
   },
   {
-    "objectID": "us_housing_clustering.html#analysis-step",
-    "href": "us_housing_clustering.html#analysis-step",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "Below we execute the corresponding step and display intermediate outputs for inspection and traceability."
+    "objectID": "US_CLUSTERING.html#data-loading",
+    "href": "US_CLUSTERING.html#data-loading",
+    "title": "Real Estate Market Analysis in the United States",
+    "section": "Data Loading",
+    "text": "Data Loading\nWe begin by loading the main dataset from Kaggle (HousingTS) and performing a brief exploration to better understand its structure. Here is the link to the dataset:\nSince this project is being carried out in Positron, we visualize the dataset directly in the IDE and verify that the percentage of missing data is 0 across all variables. It is a clean dataset, ready for analysis."
   },
   {
-    "objectID": "us_housing_clustering.html#analysis-step-1",
-    "href": "us_housing_clustering.html#analysis-step-1",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "Below we execute the corresponding step and display intermediate outputs for inspection and traceability."
+    "objectID": "US_CLUSTERING.html#geospatial-visualizations-with-geopandas.",
+    "href": "US_CLUSTERING.html#geospatial-visualizations-with-geopandas.",
+    "title": "Real Estate Market Analysis in the United States",
+    "section": "Geospatial visualizations with geopandas.",
+    "text": "Geospatial visualizations with geopandas.\nWe obtain the cartography from the U.S. Census here: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nReading the geospatial data.\nFirst we visualize the clusters across the entire U.S.\n\n\n\n\n\n\n\n\n\nThen we create a interactive map zoomed into a city, in this case Boston (BOS)."
   },
   {
-    "objectID": "us_housing_clustering.html#principal-component-analysis-pca",
-    "href": "us_housing_clustering.html#principal-component-analysis-pca",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\n\n[0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308\n 0.02503939 0.02146856 0.01447887]\n[0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393\n 0.87196332 0.89343188 0.90791075]"
-  },
-  {
-    "objectID": "us_housing_clustering.html#choosing-the-number-of-clusters-k",
-    "href": "us_housing_clustering.html#choosing-the-number-of-clusters-k",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We evaluate candidate values of K (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.\n\n\nComponentes PCA: 9\nVarianza explicada por componente: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308\n 0.02503939 0.02146856 0.01447887]\nVarianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393\n 0.87196332 0.89343188 0.90791075]"
-  },
-  {
-    "objectID": "us_housing_clustering.html#principal-component-analysis-pca-1",
-    "href": "us_housing_clustering.html#principal-component-analysis-pca-1",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\nplt.figure(figsize=(8,6))\nplt.scatter(pca_df[\"PC1\"], pca_df[\"PC2\"], s=8, alpha=0.5)\nplt.xlabel(\"PC1\")\nplt.ylabel(\"PC2\")\nplt.title(\"Espacio PCA = PC1 vs PC2\")\nplt.show()"
-  },
-  {
-    "objectID": "us_housing_clustering.html#choosing-the-number-of-clusters-k-1",
-    "href": "us_housing_clustering.html#choosing-the-number-of-clusters-k-1",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We evaluate candidate values of K (e.g., inertia curves and/or silhouette checks) to balance parsimony and segmentation quality. The selected K is used to fit K-Means in the reduced PCA space, stabilizing clusters and improving separation.\n\n\nk con mejor silueta: 4"
-  },
-  {
-    "objectID": "us_housing_clustering.html#principal-component-analysis-pca-2",
-    "href": "us_housing_clustering.html#principal-component-analysis-pca-2",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering."
-  },
-  {
-    "objectID": "us_housing_clustering.html#principal-component-analysis-pca-3",
-    "href": "us_housing_clustering.html#principal-component-analysis-pca-3",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\n\nstation                    6.292687\nrestaurant                 6.033795\nsupermarket                5.931101\nbank                       5.798149\npark                       5.090172\nhospital                   4.288910\nschool                     3.899366\nmedian_list_ppsf           2.905003\nmedian_ppsf                2.526744\nbus                        2.178003\nMedian Home Value          1.285565\nprice                      1.164426\nmedian_sale_price          1.155048\nTotal Housing Units        0.807132\nmall                       0.791088\nmedian_list_price          0.729817\nTotal Labor Force          0.695403\nMedian Commute Time        0.679908\nPer Capita Income          0.656566\nTotal School Enrollment    0.654586\ndtype: float64"
-  },
-  {
-    "objectID": "us_housing_clustering.html#data-preparation-and-standardization",
-    "href": "us_housing_clustering.html#data-preparation-and-standardization",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "Before multivariate analysis, features are standardized using z-scores to place all variables on comparable scales. This is crucial for PCA and K-Means, which are sensitive to differences in units and magnitude."
-  },
-  {
-    "objectID": "us_housing_clustering.html#analysis-step-2",
-    "href": "us_housing_clustering.html#analysis-step-2",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "Below we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n\n\n\n\n\n\nTable 1: Perfiles de cluster (z-scores estandarizados) — columnas ordenadas por importancia\n\n\n\n\n\n \nstation\nrestaurant\nsupermarket\nbank\npark\nhospital\nschool\nmedian_list_ppsf\nmedian_ppsf\nbus\nMedian Home Value\nprice\nmedian_sale_price\nTotal Housing Units\nmall\nmedian_list_price\nTotal Labor Force\nMedian Commute Time\nPer Capita Income\nTotal School Enrollment\n\n\ncluster\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n\n\n\n\n0\n-0.22\n-0.26\n-0.36\n-0.29\n-0.37\n-0.32\n-0.36\n-0.34\n-0.33\n-0.27\n-0.42\n-0.30\n-0.30\n-0.72\n-0.28\n-0.24\n-0.72\n-0.71\n-0.30\n-0.71\n\n\n1\n-0.07\n-0.08\n0.04\n-0.03\n0.06\n0.03\n0.11\n-0.20\n-0.18\n0.04\n-0.12\n-0.23\n-0.22\n0.98\n0.12\n-0.19\n1.00\n1.00\n-0.10\n1.01\n\n\n2\n4.96\n4.89\n4.86\n4.80\n4.51\n4.14\n3.95\n3.33\n3.09\n2.96\n1.70\n1.70\n1.69\n1.21\n1.77\n1.32\n0.98\n0.93\n1.15\n0.85\n\n\n3\n0.12\n0.34\n0.42\n0.35\n0.46\n0.42\n0.40\n1.26\n1.22\n0.41\n1.67\n1.50\n1.50\n-0.03\n0.45\n1.21\n-0.03\n-0.05\n1.24\n-0.07"
-  },
-  {
-    "objectID": "us_housing_clustering.html#principal-component-analysis-pca-4",
-    "href": "us_housing_clustering.html#principal-component-analysis-pca-4",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We apply PCA to capture the dominant variation across locations while retaining a predefined proportion of explained variance (e.g., 90%). Interpreting PC1 and PC2 helps summarize broad market/demographic/POI gradients. Scatter plots in PCA space offer a compact view of separation tendencies prior to clustering.\n\nimport geopandas as gpd\n\nzcta = gpd.read_file(\"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp\")\n\nzcta.head()\n\n#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.\ndf_map = pca_df[[\"zipcode\", \"cluster\",\"city\"]].drop_duplicates()\n\n#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear\ndf_map[\"zipcode_str\"] = df_map[\"zipcode\"].astype(str).str.zfill(5)\n\n#renombramos la variable para que tengan el mismo nombre en ambos datframes.\nzcta = zcta.rename(columns={\"ZCTA5CE20\": \"zipcode_str\"})\n\n#mergeamos para tenerlo en una sola BBDD\ngdf = zcta.merge(df_map, on=\"zipcode_str\", how=\"left\")\n\n\ngdf.plot(column=\"cluster\", categorical=True, legend=True, figsize=(12,8))"
-  },
-  {
-    "objectID": "us_housing_clustering.html#analysis-step-3",
-    "href": "us_housing_clustering.html#analysis-step-3",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "Below we execute the corresponding step and display intermediate outputs for inspection and traceability.\n\n# Filtrar por una ciudad\nciudad = \"NY\"  # cámbialo por el nombre de la ciudad que te interese\ngdf_city = gdf[gdf[\"city\"] == ciudad].copy()\n\n# Revisar cuántos clusters hay dentro de esa ciudad\nprint(gdf_city[\"cluster\"].value_counts())\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(10, 8))\ngdf_city.plot(column=\"cluster\", categorical=True, legend=True, cmap=\"Set2\", ax=ax)\nax.set_title(f\"Clusters en {ciudad}\", fontsize=14)\nax.axis(\"off\")\nplt.show()\n\ncluster\n0.0    535\n3.0    109\n2.0     93\n1.0     92\nName: count, dtype: int64"
-  },
-  {
-    "objectID": "us_housing_clustering.html#analysis-step-4",
-    "href": "us_housing_clustering.html#analysis-step-4",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "Below we execute the corresponding step and display intermediate outputs for inspection and traceability."
-  },
-  {
-    "objectID": "us_housing_clustering.html#geospatial-visualization-of-clusters",
-    "href": "us_housing_clustering.html#geospatial-visualization-of-clusters",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities."
-  },
-  {
-    "objectID": "us_housing_clustering.html#geospatial-visualization-of-clusters-1",
-    "href": "us_housing_clustering.html#geospatial-visualization-of-clusters-1",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities."
-  },
-  {
-    "objectID": "us_housing_clustering.html#geospatial-visualization-of-clusters-2",
-    "href": "us_housing_clustering.html#geospatial-visualization-of-clusters-2",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.\n\n\nMapa interactivo guardado en 'mapa_clusters_interactivo.html'"
-  },
-  {
-    "objectID": "us_housing_clustering.html#geospatial-visualization-of-clusters-3",
-    "href": "us_housing_clustering.html#geospatial-visualization-of-clusters-3",
-    "title": "US Housing Market Clustering & PCA",
-    "section": "",
-    "text": "We project clustered locations into a geographic map and render an interactive HTML (CartoDB tiles) where each ZIP/city is colored by cluster. This view reveals spatial patterns—regional concentrations, urban vs. suburban segmentation, and cross-state similarities.\n\ngdf_w = gdf.to_crs(epsg=4326)\n\nmG = gdf_w.explore(\n    column=\"cluster\",\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",\n    legend=True\n)\n\nmG.save(\"mapa_clusters_interactivo_global.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'\")"
+    "objectID": "US_CLUSTERING.html#interactive-map-of-boston.",
+    "href": "US_CLUSTERING.html#interactive-map-of-boston.",
+    "title": "Real Estate Market Analysis in the United States",
+    "section": "Interactive Map of Boston.",
+    "text": "Interactive Map of Boston.\n(It would be cool to do this for all cities, but my PC isn’t able to render it.)\n\n\nCluster 0 (grey blue): Lagging areas or zones with low urban activity\nThese areas are mainly located on the periphery of the metropolitan region. They tend to correspond to less dense municipalities with lower availability of public transportation, services, and economic activity. They are characterized by more dispersed urban structures, lower intensity, and less dynamic housing markets. They represent the outer edge of Boston’s area of influence, where extensive suburban or semi-rural environments dominate.\nCluster 1 (Grey): Stable residential areas**\nThis group appears in both consolidated suburbs and areas with a good balance between services, housing, and connectivity. These are typical middle-class zones with sufficient amenities, moderate prices, and well-established residential patterns. They function as stable communities—neither the most affordable nor the most exclusive—offering intermediate urban standards.\nCluster 2 (Yellow): The wealthiest and densest areas\nLocated in Boston’s urban core and its immediate surroundings, this cluster highlights the areas with the highest economic intensity, service density, transportation access, and real estate value. It includes the most central, economically active, and attractive neighborhoods. Its limited spatial extent underscores its exclusivity: these are the metropolitan area’s key hubs, where wealth and urban dynamism concentrate.\nCluster 3 (Dark blue): Transition zones or emerging subcenters\nDistributed around the main core, these areas show intermediate characteristics but with indicators pointing toward growth, appreciation, or urban transformation. They are neighborhoods or municipalities that do not reach the intensity of the central core but exhibit higher levels of services, real estate value, or economic activity than more traditional suburbs. They represent zones where new urban hubs are developing or where a gradual consolidation process is taking place.\n\n\n\nNOTE\n\n\n\nThe geospatial classification shown on the Boston map comes from a clustering process performed at the national scale. In other words, the four clusters were not generated exclusively using Boston data, but with a much larger dataset that includes thousands of ZIP codes and metropolitan areas across the United States.\nThis means that the patterns detected —and therefore the assignment of each Boston area to one cluster or another— are based on comparisons among cities that are very different from one another, such as Los Angeles, Chicago, Dallas, Seattle, Miami, NY, or Denver. The model identifies groups according to national trends in housing prices, service density, transportation, income, commercial supply, and other socioeconomic indicators.\nBecause the clusters were formed using this broad and heterogeneous dataset, the resulting segmentation describes how Boston neighborhoods fit within the national real estate landscape, not just within their own local context. For example, Boston’s urban core appears in the highest-level cluster because, when compared to cities across the country, it consistently ranks among the areas with the greatest economic density and real estate value.\nIf one wanted a classification more closely aligned with Boston’s internal dynamics, the process could be repeated using data only from this city. Such an approach for instance, applying PCA for dimensionality reduction and then k-means to generate new clusters would produce groups tailored exclusively to Boston’s internal variation, without influence from patterns elsewhere in the country."
   },
   {
     "objectID": "EEUU_CLUSTERIZADO.html",
@@ -151,41 +53,41 @@
     "href": "EEUU_CLUSTERIZADO.html#carga-de-datos",
     "title": "Análisis del mercado inmobiliario en Estados Unidos",
     "section": "Carga de datos",
-    "text": "Carga de datos\nEmpezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor. Este es el link del dataset: https://www.kaggle.com/datasets/shengkunwang/housets-dataset\nComo este proyecto lo estamos realizado a través de positron visualizamos en el propio IDE el dataset y vemos que el porcentaje de datos missing es 0 para todas las variables. Es un dataset limpio y listo para analizar."
+    "text": "Carga de datos\nEmpezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor. Este es el link del dataset:\nComo este proyecto lo estamos realizado a través de positron visualizamos en el propio IDE el dataset y vemos que el porcentaje de datos missing es 0 para todas las variables. Es un dataset limpio y listo para analizar."
   },
   {
     "objectID": "EEUU_CLUSTERIZADO.html#visualizaciones-geoespaciales-con-geopandas.",
     "href": "EEUU_CLUSTERIZADO.html#visualizaciones-geoespaciales-con-geopandas.",
     "title": "Análisis del mercado inmobiliario en Estados Unidos",
     "section": "Visualizaciones Geoespaciales con geopandas.",
-    "text": "Visualizaciones Geoespaciales con geopandas.\nLa cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nLectura de los datos geoespaciales.\n\nimport geopandas as gpd\n\nzcta = gpd.read_file(\"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp\")\n\nzcta.head()\n\n#ajustamos el dataframe para tener solo el zipcode y el cluster asociado.\ndf_map = pca_df[[\"zipcode\", \"cluster\",\"city\"]].drop_duplicates()\n\n#Como en el archivo .shp tiene el zipcode con 5 dígitos hay que actualizar la variable en este df para matchear\ndf_map[\"zipcode_str\"] = df_map[\"zipcode\"].astype(str).str.zfill(5)\n\n#renombramos la variable para que tengan el mismo nombre en ambos datframes.\nzcta = zcta.rename(columns={\"ZCTA5CE20\": \"zipcode_str\"})\n\n#mergeamos para tenerlo en una sola BBDD\ngdf = zcta.merge(df_map, on=\"zipcode_str\", how=\"left\")\n\n\ngdf.plot(column=\"cluster\", categorical=True, legend=True, figsize=(12,8))\n\n\n\n\n\n\n\n\n\n# Filtrar por una ciudad\nciudad = \"NY\"  # cámbialo por el nombre de la ciudad que te interese\ngdf_city = gdf[gdf[\"city\"] == ciudad].copy()\n\n# Revisar cuántos clusters hay dentro de esa ciudad\nprint(gdf_city[\"cluster\"].value_counts())\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(10, 8))\ngdf_city.plot(column=\"cluster\", categorical=True, legend=True, cmap=\"Set2\", ax=ax)\nax.set_title(f\"Clusters en {ciudad}\", fontsize=14)\nax.axis(\"off\")\nplt.show()\n\ncluster\n0.0    535\n3.0    109\n2.0     93\n1.0     92\nName: count, dtype: int64\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLe incorporamos zoom para poder verlo desde más cerca.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# ==============================\n# MAPA de NY por CLUSTERS con zoom interactivo\n# ==============================\n\nimport geopandas as gpd\n\nciudad = \"NY\"          # cambia si quieres otra\ncity_col = \"city\"      # cambia si tu columna se llama distinto\ncluster_col = \"cluster\"\n\n# Filtra y pasa a lat/lon (WGS84) para web\ngdf_city = gdf[gdf[city_col] == ciudad].to_crs(epsg=4326)\n\nm = gdf_city.explore(\n    column=cluster_col,          # colorea por cluster\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",    # mapa base\n    legend=True                  # leyenda de clusters\n    # sin tooltip ni popup\n)\n\nm.save(\"mapa_clusters_interactivo.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo.html'\")\n\nMapa interactivo guardado en 'mapa_clusters_interactivo.html'"
+    "text": "Visualizaciones Geoespaciales con geopandas.\nLa cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nLectura de los datos geoespaciales.\nPrimero visualizamos el mapa completo de EEUU con los clusters.\n\n\n\n\n\n\n\n\n\nLuego visualizamos el mapa interactivo de NY."
   },
   {
     "objectID": "EEUU_CLUSTERIZADO.html#mapa-interactivo-de-ny.",
     "href": "EEUU_CLUSTERIZADO.html#mapa-interactivo-de-ny.",
     "title": "Análisis del mercado inmobiliario en Estados Unidos",
     "section": "Mapa interactivo de NY.",
-    "text": "Mapa interactivo de NY.\n(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)\n\n\n\n# ==============================\n# ESTE SERÍA EL CÓDIGO A AJECUTAR SI QUIERES VISUALIZAR TODAS LAS CIUDADES EN UN MAPA\n# QUE MI PC NO PUEDE RENDERIZARLO.\ngdf_w = gdf.to_crs(epsg=4326)\n\nmG = gdf_w.explore(\n    column=\"cluster\",\n    categorical=True,\n    cmap=\"Set2\",\n    tiles=\"CartoDB positron\",\n    legend=True\n)\n\nmG.save(\"mapa_clusters_interactivo_global.html\")\nprint(\"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'\")"
+    "text": "Mapa interactivo de NY.\n(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)\n\n\nCluster 0 (Azul grisaceo): Zonas rezagadas o de baja actividad urbana\nEste clúster domina la mayor parte del mapa:\nTodo el arco sur de New Jersey.\nGran parte de Connecticut.\nMucho del interior de Long Island.\nZonas alejadas del centro de NY.\nCluster 1 (Gris): zonas residenciales estables.\nEste clúster aparece:\nRodeando el núcleo amarillo, especialmente en Brooklyn y Queens.\nTambién en partes de Newark y otras ciudades cercanas al núcleo de NY.\nForma un cinturón morado alrededor de Manhattan.\nCluster 2 (Amarillo): las zonas más ricas y densas.\nEste clúster aparece casi exclusivamente en el centro de la ciudad de Nueva York, concretamente:\nManhattan, especialmente Midtown y parte del Downtown.\nSe observa como un núcleo amarillo muy concentrado y sin dispersión.\nCluster 3 (Azul oscuro): Zonas en transición o subcentros emergentes.\nEl clúster 3 está muy distribuido, destacando:\nAmplias zonas de Long Island.\nPartes del norte de la ciudad, como Westchester County.\nÁreas suburbanas en New Jersey próximas a la frontera con NY.\n\n\n\nNOTA\n\n\n\nLa clasificación geoespacial mostrada en el mapa de Nueva York procede de un proceso de clusterización realizado a escala nacional. Es decir, los cuatro clústeres no se han generado exclusivamente con datos de Nueva York, sino con una base de datos mucho más amplia que incluye miles de códigos postales y áreas metropolitanas de todo Estados Unidos.\nEsto implica que los patrones detectados —y, por tanto, la asignación de cada zona de Nueva York a uno u otro clúster— se basan en comparaciones entre ciudades muy diferentes entre sí, como Los Ángeles, Chicago, Dallas, Seattle, Miami, Boston o Denver. El modelo identifica grupos según tendencias nacionales de precios de vivienda, densidad de servicios, transporte, ingresos, oferta comercial y otros indicadores socioeconómicos.\nDado que los clústeres se forman a partir de este conjunto amplio y heterogéneo, la segmentación resultante describe cómo encajan los barrios de Nueva York dentro del panorama inmobiliario nacional, no únicamente dentro de su propio contexto local. Por ejemplo, Manhattan aparece en el clúster de mayor nivel porque, al compararse con ciudades de todo el país, se sitúa consistentemente entre las zonas con mayor densidad económica y valor inmobiliario.\nSi se quisiera obtener una clasificación más ajustada a las dinámicas internas de Nueva York, se podría repetir el proceso empleando únicamente los datos de esta ciudad. Un enfoque así —por ejemplo aplicando PCA para reducción de dimensionalidad y posteriormente k-means para generar nuevos clústeres— produciría grupos adaptados exclusivamente a las variaciones internas de Nueva York, sin influencia de los patrones del resto del país."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "US Housing Clustering",
+    "title": "\nUS Housing Clustering\n",
     "section": "",
-    "text": "Análisis exploratorio y clusterización del mercado inmobiliario de Estados Unidos, acompañado de visualizaciones interactivas y un mapa dinámico basado en datos geoespaciales."
+    "text": "Exploratory analysis and clustering of the United States real estate market, accompanied by interactive visualizations and a dynamic map based on geospatial data."
   },
   {
     "objectID": "index.html#accesos-directos",
     "href": "index.html#accesos-directos",
-    "title": "US Housing Clustering",
+    "title": "\nUS Housing Clustering\n",
     "section": "🔍 Accesos directos",
-    "text": "🔍 Accesos directos\n\n\n📊 Análisis completo\nExplora metodologías, gráficos, clusterización, conclusiones y todo el flujo del proyecto.\n👉 Abrir análisis\n\n\n🗺️ Mapa interactivo de NY\nVisualiza los clusters geográficos mediante un mapa dinámico generado con GeoPandas+Folium.\n👉 Ver mapa\n\n\n🏠 ¿Qué es este proyecto?\nEl objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:\n\n✔️ Limpieza y preparación de datos\n\n✔️ Técnicas de clusterización\n✔️ Visualizaciones estadísticas y geoespaciales\n\n✔️ Mapas interactivos basados en coordenadas reales"
+    "text": "🔍 Accesos directos\n\n\n📊 Análisis completo\nExplora metodologías, gráficos, clusterización, conclusiones y todo el flujo del proyecto.\n👉 Abrir análisis\n\n\n📊 Full Analysis\nExplore methodologies, charts, clustering, conclusions, and the entire project workflow.\n👉 Open analysis\n\n\n🏠 What is this project?\nThe main goal is to analyze patterns in U.S. real estate data through:\n\n✔️ Data cleaning and preparation\n✔️ Clustering techniques\n✔️ Statistical and geospatial visualizations\n\n✔️ Interactive maps based on real coordinates"
   },
   {
-    "objectID": "index.html#qué-es-este-proyecto",
-    "href": "index.html#qué-es-este-proyecto",
-    "title": "US Housing Clustering",
-    "section": "🏠 ¿Qué es este proyecto?",
-    "text": "🏠 ¿Qué es este proyecto?\nEl objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:\n\n✔️ Limpieza y preparación de datos\n\n✔️ Técnicas de clusterización\n✔️ Visualizaciones estadísticas y geoespaciales\n\n✔️ Mapas interactivos basados en coordenadas reales"
+    "objectID": "index.html#what-is-this-project",
+    "href": "index.html#what-is-this-project",
+    "title": "\nUS Housing Clustering\n",
+    "section": "🏠 What is this project?",
+    "text": "🏠 What is this project?\nThe main goal is to analyze patterns in U.S. real estate data through:\n\n✔️ Data cleaning and preparation\n✔️ Clustering techniques\n✔️ Statistical and geospatial visualizations\n\n✔️ Interactive maps based on real coordinates"
   }
 ]

@@ -3,15 +3,15 @@ project:
   output-dir: docs
 
 website:
-  title: "Proyecto Clusterización vivienda EEUU"
+  title: " "
   navbar:
     left:
       - href: index.qmd
         text: Inicio
       - href: EEUU_CLUSTERIZADO.qmd
         text: EEUU Clusterizado 
-#        href: us_housing_clustering.qmd ya lo pondré cuando esté listo.
-#        text: US Housing Clustering 
+      - href: US_CLUSTERING.qmd
+        text: US Housing Clustering 
       
 
 format:

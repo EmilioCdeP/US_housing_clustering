@@ -1,5 +1,5 @@
 ---
-title: "US Housing Clustering"
+title: ""
 format:
   html:
     toc: false
@@ -62,8 +62,7 @@ format:
 <div class="hero">
   <h1>US Housing Clustering</h1>
   <p>
-    Análisis exploratorio y clusterización del mercado inmobiliario de Estados Unidos,
-    acompañado de visualizaciones interactivas y un mapa dinámico basado en datos geoespaciales.
+    Exploratory analysis and clustering of the United States real estate market, accompanied by interactive visualizations and a dynamic map based on geospatial data.
   </p>
 </div>
 
@@ -79,19 +78,19 @@ Explora metodologías, gráficos, clusterización, conclusiones y todo el flujo 
 </div>
 
 <div class="card">
-### 🗺️ Mapa interactivo de NY
-Visualiza los clusters geográficos mediante un mapa dinámico generado con GeoPandas+Folium.
+### 📊 Full Analysis
+Explore methodologies, charts, clustering, conclusions, and the entire project workflow.
   
-👉 [Ver mapa](mapa_clusters_interactivo.html)
+👉 [Open analysis](US_CLUSTERING.qmd)
 
 
 </div>
 
-## 🏠 ¿Qué es este proyecto?
+## 🏠 What is this project?
 
-El objetivo principal es analizar patrones en los datos inmobiliarios de Estados Unidos mediante:
+The main goal is to analyze patterns in U.S. real estate data through:
 
-- ✔️ Limpieza y preparación de datos  
-- ✔️ Técnicas de clusterización 
-- ✔️ Visualizaciones estadísticas y geoespaciales  
-- ✔️ Mapas interactivos basados en coordenadas reales  
+- ✔️ Data cleaning and preparation 
+- ✔️ Clustering techniques 
+- ✔️ Statistical and geospatial visualizations  
+- ✔️ Interactive maps based on real coordinates  

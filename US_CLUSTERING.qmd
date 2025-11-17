@@ -1,7 +1,7 @@
 ---
-title: "Análisis del mercado inmobiliario en Estados Unidos"
+title: "Real Estate Market Analysis in the United States"
 author: "Emilio Coronado de Palma"
-abstract: "Este informe segmenta los mercados inmobiliarios estadounidenses mediante PCA y K-Means, considerando características de mercado, puntos de interés y datos demográficos. Se documenta la metodología, se interpretan los componentes principales, se perfilan los clústeres y se muestra su distribución espacial."
+abstract: "This report segments U.S. housing markets using PCA and K-Means, incorporating market features, points of interest, and demographic data. The methodology is documented, the principal components are interpreted, the clusters are profiled, and their spatial distribution is presented."
 format:
   html:
     code-link: true
@@ -11,17 +11,17 @@ format:
 editor: visual
 ---
 
-## Descripción general del proyecto
+## Proyect Overview
 
-Este informe presenta una segmentación del mercado inmobiliario estadounidense basada en datos a nivel de **código postal/ciudad**. Combinamos indicadores de vivienda (p. ej., precio medio de venta/listado, inventario, días en el mercado) con puntos de interés (POI) de OSM y datos demográficos. Nuestro flujo de trabajo se centra en la estandarización, la reducción de dimensionalidad (**PCA**), la agrupación (**K-Means**) y la visualización geoespacial. Mantenemos el código sin cambios y priorizamos una interpretación clara y reproducible de cada paso.
+This report presents a segmentation of the U.S. real estate market based on ZIP code- and city-level data. We combine housing indicators (e.g., median sale/list price, inventory, days on market) with points of interest (POI) from OSM and demographic variables. Our workflow focuses on standardization, dimensionality reduction (PCA), clustering (K-Means), and geospatial visualization. The code is kept unchanged, and we prioritize a clear and reproducible interpretation of each step.
 
-Preguntas clave que abordamos: - *¿Qué dimensiones latentes resumen mejor la variación entre ubicaciones?* - *¿Cuántos segmentos de mercado (clústeres) distintos emergen?* - *¿Qué caracteriza a cada clúster en términos de señales de mercado, POI y datos demográficos?* - *¿Dónde se ubican geográficamente estos clústeres?*
+Key questions addressed: - *Which latent dimensions best summarize the variation across locations?* - *How many distinct market segments (clusters) emerge?* - *What characterizes each cluster in terms of market signals, POIs, and demographic attributes?* - *Where are these clusters geographically located?*
 
-> Nota: Este documento no incluye predicción supervisada de precios. El énfasis está en el descubrimiento e interpretación de la estructura. Pero sería una buena actualización para el proyecto en el futuro.
+> Note: This document does not include supervised price prediction. The emphasis is on discovering and interpreting the underlying structure. However, it would be a valuable future extension of the project.
 
-## Carga de datos
+## Data Loading
 
-Empezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor. [Este es el link del dataset:](https://www.kaggle.com/datasets/shengkunwang/housets-dataset)
+We begin by loading the main dataset from Kaggle (HousingTS) and performing a brief exploration to better understand its structure. [Here is the link to the dataset:](https://www.kaggle.com/datasets/shengkunwang/housets-dataset)
 
 ```{python}
 #| echo: false
@@ -36,11 +36,11 @@ df.info()
 df.describe(include='all')
 ```
 
-Como este proyecto lo estamos realizado a través de positron visualizamos en el propio IDE el dataset y vemos que el porcentaje de datos missing es 0 para todas las variables. Es un dataset limpio y listo para analizar.
+Since this project is being carried out in Positron, we visualize the dataset directly in the IDE and verify that the percentage of missing data is 0 across all variables. It is a clean dataset, ready for analysis.
 
-# Análisis de componentes principales (PCA)
+# Principal Component Analysis (PCA)
 
-Aplicamos **PCA** para capturar la variación dominante entre ubicaciones, reteniendo una proporción predefinida de varianza explicada del **90%**.
+We apply **PCA** to capture the dominant variation across locations, retaining a predefined proportion of **90%** explained variance.
 
 ```{python}
 #| eval: true
@@ -95,12 +95,12 @@ pca_df = pca_df.merge(zip_city.reset_index(), on="zipcode", how="left")
 explained = pca.explained_variance_ratio_
 cum_explained = explained.cumsum()
 
-print("Número de componentes principales:", len(pca_cols))
-print("Varianza explicada por componente:", explained)
-print("Varianza explicada acumulada:", cum_explained)
+print("Principal Components number:", len(pca_cols))
+print("Variation explained:", explained)
+print("Cumulative variation explained:", cum_explained)
 ```
 
-Ahora vamos a visualizar la interpretación de PC1 y PC2. Esto nos ayuda a resumir los gradientes generales de mercado, demográficos y de puntos de interés.
+Now we visualize the interpretation of PC1 and PC2. This helps us summarize the general gradients of market conditions, demographics, and points of interest.
 
 ```{python}
 #| eval: true
@@ -114,9 +114,10 @@ plt.title("PC1 vs PC2")
 plt.show()
 ```
 
-Ahora vamos a realizar la clusterización y vamos a visualizar el mismo gráfico de dispersion de las componentes principales ya segmentado.
+Now we'll perform the clustering and visualize the same segmented principal component scatter plot.
 
-# Clusterización con k-means
+
+# Clustering with k-means
 
 ```{python}
 #| eval: true
@@ -142,7 +143,7 @@ for k in k_range:
 
 # k “óptimo” (máxima silueta)
 best_k = k_range[int(np.argmax(sil_scores))]
-print("k con mejor silueta:", best_k)
+print("k with best silhouette:", best_k)
 
 # --- 3) Ajustar K-means definitivo con ese k ---
 kmeans = KMeans(n_clusters=best_k, n_init="auto", random_state=42)
@@ -162,9 +163,9 @@ plt.show()
 
 ```
 
-Ahora ya visualizamos muy bien cómo se distribuyen estos clusters en función de la PC1 y la PC2.
+We can now clearly see how these clusters are distributed according to PC1 and PC2.
 
-Ahora vamos a graficar una tabla para entender estos clusters mejor. Pero primero tenemos que entender qué variables son las que más información nos dan. Por tanto medimos la varianza entre los clusters y obtenemos la lista de variables que mayor varianza dan.
+Now we'll create a table to understand better these clusters. But first, we need to understand which variables provide the most information. Therefore, we measure the variance between the clusters and obtain the list of variables that contribute the most variance.
 
 ```{python}
 #| eval: true
@@ -210,7 +211,7 @@ cluster_variability.head(20)
 
 ```
 
-Una vez teniendo las variables que más información aportan a la diferenciación y al entendimiento de estos clusters. Generamos la tabla.
+Once we have the variables that provide the most information for distinguishing and understanding these clusters, we generate the table.
 
 ```{python}
 #| eval: true
@@ -305,65 +306,65 @@ styler
 
 ```
 
-Ahora ya podemos interpretar los resultados y definir los 4 clusters.
+Now we can interpret the results and define the 4 clusters.
 
-**Cluster 0 — “Zonas rezagadas o de baja actividad urbana”**
+**Cluster 0 — “Lagging areas or low-urban-activity zones”**
 
-Prácticamente todas las variables están en negativo, la mayoría entre –0.2 y –0.7.
+Practically all variables are negative, most between –0.2 and –0.7.
 
-Destacan valores bajos en:
+Low values stand out in:
 
-station, restaurant, supermarket, bank, park, hospital, school → indica baja densidad de servicios y equipamientos.
+station, restaurant, supermarket, bank, park, hospital, school → indicates low density of services and facilities.
 
-Total Housing Units, Total Labor Force, Per Capita Income, Total School Enrollment también por debajo de la media → zonas menos pobladas y con menor dinamismo económico.
+Total Housing Units, Total Labor Force, Per Capita Income, Total School Enrollment also below average → less populated areas with lower economic dynamism.
 
-En conjunto: este grupo representa áreas periféricas o rurales, con menor acceso a infraestructura, menor actividad económica y precios inmobiliarios más bajos.
+Overall: this group represents peripheral or rural areas, with limited access to infrastructure, lower economic activity, and lower real estate prices.
 
-**Cluster 1 — “Zonas residenciales estables”**
+**Cluster 1 — “Stable residential areas”**
 
-La mayoría de los z-scores rondan 0, lo que indica valores promedio respecto al conjunto.
+Most z-scores are around 0, indicating average values relative to the full dataset.
 
-Algunas variables ligeramente por encima del promedio:
+Some variables slightly above average:
 
-mall, park, school, Total Housing Units, Total Labor Force, Median Commute Time, Total School Enrollment → áreas con actividad moderada, algo más residenciales y con cierta dotación de servicios.
+mall, park, school, Total Housing Units, Total Labor Force, Median Commute Time, Total School Enrollment → areas with moderate activity, somewhat more residential, and with a reasonable supply of services.
 
-Variables por debajo de la media en median_list_price, price, median_ppsf → precios algo más bajos que el promedio.
+Variables below average in median_list_price, price, median_ppsf → somewhat lower prices than the overall average.
 
-En conjunto: zonas residenciales medias, equilibradas, con buena dotación pero sin excesos de precios o servicios extremos.
+Overall: mid-range residential areas, balanced, with a good level of amenities but without extreme prices or service concentrations.
 
-**Cluster 2 — “Núcleos urbanos altamente desarrollados”**
+**Cluster 2 — “Highly developed urban cores”**
 
-Es el grupo más extremo y distintivo:
+This is the most extreme and distinctive group:
 
-z-scores de +4 a +5 en casi todas las variables principales (station, restaurant, supermarket, bank, park, hospital, school).
+z-scores from +4 to +5 in almost all key variables (station, restaurant, supermarket, bank, park, hospital, school).
 
-También valores altos en variables económicas e inmobiliarias (median_list_ppsf, median_ppsf, price, Median Home Value).
+Also high values in economic and real-estate variables (median_list_ppsf, median_ppsf, price, Median Home Value).
 
-Representa claramente las áreas centrales o premium de la ciudad:
+It clearly represents the central or premium areas of the city:
 
-Altísima concentración de servicios, infraestructura y precios de vivienda elevados.
+Very high concentration of services, infrastructure, and elevated housing prices.
 
-Alta densidad poblacional y actividad económica.
+High population density and economic activity.
 
-Este es el cluster de mayor centralidad, riqueza y desarrollo urbano.
+This is the cluster with the greatest centrality, wealth, and urban development.
 
-**Cluster 3 — “Zonas en transición o subcentros emergentes”**
+**Cluster 3 — “Transition zones or emerging subcenters”**
 
-z-scores positivos moderados (entre +0.3 y +1.5) en muchas variables.
+Moderate positive z-scores (between +0.3 and +1.5) in many variables.
 
-Destacan:
+Notable:
 
-median_list_ppsf, median_ppsf, median_sale_price, Median Home Value, Per Capita Income → por encima de la media.
+median_list_ppsf, median_ppsf, median_sale_price, Median Home Value, Per Capita Income → above average.
 
-station, restaurant, supermarket, park, hospital → también algo superiores.
+station, restaurant, supermarket, park, hospital → also somewhat higher.
 
-A diferencia del cluster 2, los valores no son extremos → zonas urbanas consolidadas pero no top, posiblemente barrios intermedios o en expansión, con precios en crecimiento y buena accesibilidad.
+Unlike cluster 2, the values are not extreme → consolidated but not top-tier urban areas, possibly intermediate or expanding neighborhoods, with rising prices and good accessibility.
 
-## Visualizaciones Geoespaciales con geopandas.
+## Geospatial visualizations with geopandas.
 
-La cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas
+We obtain the cartography from the U.S. Census here: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas
 
-#### Lectura de los datos geoespaciales.
+#### Reading the geospatial data.
 
 ```{python}
 #| eval: true
@@ -388,13 +389,12 @@ zcta = zcta.rename(columns={"ZCTA5CE20": "zipcode_str"})
 gdf = zcta.merge(df_map, on="zipcode_str", how="left")
 
 
-#Plot antiguo
-#gdf.plot(column="cluster", categorical=True, legend=True, figsize=(12,8))
+#plot anterior 
+# gdf.plot(column="cluster", categorical=True, legend=True, figsize=(12,8))
 
 ```
 
-Primero visualizamos el mapa completo de EEUU con los clusters.
-
+First we visualize the clusters across the entire U.S.
 ```{python}
 #| eval: true
 #| echo: false
@@ -407,14 +407,16 @@ plt.show()
 
 ```
 
+
+
 ```{python}
 #| eval: true
 #| echo: false
 #| include: false
 
-# ==============================#
-# MAPA ESTÁTICO de NY
-# ==============================#
+# ===================================#
+# STATIC MAP of BOSTON by CLUSTERS
+# ===================================#
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -423,7 +425,7 @@ from shapely.geometry import Point
 import pyproj
 
 # === Parámetros de entrada ===
-ciudad = "NY"  # tu filtro de ciudad
+ciudad = "BOS"  # tu filtro de ciudad
 city_col = "city"
 cluster_col = "cluster"
 
@@ -468,7 +470,7 @@ plt.show()
 
 ```
 
-Luego visualizamos el mapa interactivo de NY.
+Then we create a interactive map zoomed into a city, in this case Boston (BOS).
 
 ```{python}
 #| eval: true
@@ -481,16 +483,16 @@ Luego visualizamos el mapa interactivo de NY.
 
 import geopandas as gpd
 
-ciudad = "NY"
+ciudad = "BOS"
 city_col = "city"
 cluster_col = "cluster"
 
 # Diccionario de nombres para la leyenda
 cluster_names = {
-    0: "Zonas rezagadas",
-    1: "Zonas residenciales estables",
-    2: "Zonas ricas y densas",
-    3: "Zonas emergentes"
+    0: "Lagging areas",
+    1: "Stable residential areas",
+    2: "Wealthy & dense areas",
+    3: "Emerging subcenters"
 }
 
 # Filtra ciudad
@@ -510,71 +512,49 @@ m = gdf_city.explore(
     legend=True
 )
 
-m.save("NY_map.html")
+m.save("BOS_map.html")
 
-#print("Mapa interactivo guardado en 'NY_map.html'")
+#print("Mapa interactivo guardado en 'BOS_map.html'")
 
 ```
 
-## Mapa interactivo de NY.
+## Interactive Map of Boston.
 
-(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)
+(It would be cool to do this for all cities, but my PC isn’t able to render it.)
 
-<iframe src="NY_map.html" width="100%" height="600px" style="border:none;">
+<iframe src="BOS_map.html" width="100%" height="600px" style="border:none;">
 
 </iframe>
 
-**Cluster 0 (Azul grisaceo): Zonas rezagadas o de baja actividad urbana**
+**Cluster 0 (grey blue): Lagging areas or zones with low urban activity**
 
-Este clúster domina la mayor parte del mapa:
+These areas are mainly located on the periphery of the metropolitan region. They tend to correspond to less dense municipalities with lower availability of public transportation, services, and economic activity. They are characterized by more dispersed urban structures, lower intensity, and less dynamic housing markets. They represent the outer edge of Boston’s area of influence, where extensive suburban or semi-rural environments dominate.
 
-Todo el arco sur de New Jersey.
+**Cluster 1 (Grey): Stable residential areas****
 
-Gran parte de Connecticut.
+This group appears in both consolidated suburbs and areas with a good balance between services, housing, and connectivity. These are typical middle-class zones with sufficient amenities, moderate prices, and well-established residential patterns. They function as stable communities—neither the most affordable nor the most exclusive—offering intermediate urban standards.
 
-Mucho del interior de Long Island.
+**Cluster 2 (Yellow): The wealthiest and densest areas**
 
-Zonas alejadas del centro de NY.
+Located in Boston’s urban core and its immediate surroundings, this cluster highlights the areas with the highest economic intensity, service density, transportation access, and real estate value. It includes the most central, economically active, and attractive neighborhoods. Its limited spatial extent underscores its exclusivity: these are the metropolitan area’s key hubs, where wealth and urban dynamism concentrate.
 
-**Cluster 1 (Gris): zonas residenciales estables.**
+**Cluster 3 (Dark blue): Transition zones or emerging subcenters**
 
-Este clúster aparece:
+Distributed around the main core, these areas show intermediate characteristics but with indicators pointing toward growth, appreciation, or urban transformation. They are neighborhoods or municipalities that do not reach the intensity of the central core but exhibit higher levels of services, real estate value, or economic activity than more traditional suburbs. They represent zones where new urban hubs are developing or where a gradual consolidation process is taking place.
 
-Rodeando el núcleo amarillo, especialmente en Brooklyn y Queens.
 
-También en partes de Newark y otras ciudades cercanas al núcleo de NY.
-
-Forma un cinturón morado alrededor de Manhattan.
-
-**Cluster 2 (Amarillo): las zonas más ricas y densas.**
-
-Este clúster aparece casi exclusivamente en el centro de la ciudad de Nueva York, concretamente:
-
-Manhattan, especialmente Midtown y parte del Downtown.
-
-Se observa como un núcleo amarillo muy concentrado y sin dispersión.
-
-**Cluster 3 (Azul oscuro): Zonas en transición o subcentros emergentes.**
-
-El clúster 3 está muy distribuido, destacando:
-
-Amplias zonas de Long Island.
-
-Partes del norte de la ciudad, como Westchester County.
-
-Áreas suburbanas en New Jersey próximas a la frontera con NY.
 
 |          |
 |:--------:|
-| **NOTA** |
+| **NOTE** |
 
-La clasificación geoespacial mostrada en el mapa de Nueva York procede de un proceso de clusterización realizado a escala nacional. Es decir, los cuatro clústeres no se han generado exclusivamente con datos de Nueva York, sino con una base de datos mucho más amplia que incluye miles de códigos postales y áreas metropolitanas de todo Estados Unidos.
+The geospatial classification shown on the Boston map comes from a clustering process performed at the national scale. In other words, the four clusters were not generated exclusively using Boston data, but with a much larger dataset that includes thousands of ZIP codes and metropolitan areas across the United States.
 
-Esto implica que los patrones detectados —y, por tanto, la asignación de cada zona de Nueva York a uno u otro clúster— se basan en comparaciones entre ciudades muy diferentes entre sí, como Los Ángeles, Chicago, Dallas, Seattle, Miami, Boston o Denver. El modelo identifica grupos según tendencias nacionales de precios de vivienda, densidad de servicios, transporte, ingresos, oferta comercial y otros indicadores socioeconómicos.
+This means that the patterns detected —and therefore the assignment of each Boston area to one cluster or another— are based on comparisons among cities that are very different from one another, such as Los Angeles, Chicago, Dallas, Seattle, Miami, NY, or Denver. The model identifies groups according to national trends in housing prices, service density, transportation, income, commercial supply, and other socioeconomic indicators.
 
-Dado que los clústeres se forman a partir de este conjunto amplio y heterogéneo, la segmentación resultante describe cómo encajan los barrios de Nueva York dentro del panorama inmobiliario nacional, no únicamente dentro de su propio contexto local. Por ejemplo, Manhattan aparece en el clúster de mayor nivel porque, al compararse con ciudades de todo el país, se sitúa consistentemente entre las zonas con mayor densidad económica y valor inmobiliario.
+Because the clusters were formed using this broad and heterogeneous dataset, the resulting segmentation describes how Boston neighborhoods fit within the national real estate landscape, not just within their own local context. For example, Boston's urban core appears in the highest-level cluster because, when compared to cities across the country, it consistently ranks among the areas with the greatest economic density and real estate value.
 
-Si se quisiera obtener una clasificación más ajustada a las dinámicas internas de Nueva York, se podría repetir el proceso empleando únicamente los datos de esta ciudad. Un enfoque así —por ejemplo aplicando PCA para reducción de dimensionalidad y posteriormente k-means para generar nuevos clústeres— produciría grupos adaptados exclusivamente a las variaciones internas de Nueva York, sin influencia de los patrones del resto del país.
+If one wanted a classification more closely aligned with Boston’s internal dynamics, the process could be repeated using data only from this city. Such an approach for instance, applying PCA for dimensionality reduction and then k-means to generate new clusters would produce groups tailored exclusively to Boston’s internal variation, without influence from patterns elsewhere in the country.
 
 ```{python}
 #| eval: false

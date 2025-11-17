@@ -8,7 +8,7 @@
 
 <meta name="author" content="Emilio Coronado de Palma">
 
-<title>Análisis del mercado inmobiliario en Estados Unidos –</title>
+<title>Real Estate Market Analysis in the United States –</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -98,11 +98,11 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./EEUU_CLUSTERIZADO.html" aria-current="page"> 
+    <a class="nav-link" href="./EEUU_CLUSTERIZADO.html"> 
 <span class="menu-text">EEUU Clusterizado</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./US_CLUSTERING.html"> 
+    <a class="nav-link active" href="./US_CLUSTERING.html" aria-current="page"> 
 <span class="menu-text">US Housing Clustering</span></a>
   </li>  
 </ul>
@@ -121,13 +121,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#descripción-general-del-proyecto" id="toc-descripción-general-del-proyecto" class="nav-link active" data-scroll-target="#descripción-general-del-proyecto">Descripción general del proyecto</a></li>
-  <li><a href="#carga-de-datos" id="toc-carga-de-datos" class="nav-link" data-scroll-target="#carga-de-datos">Carga de datos</a></li>
-  <li><a href="#análisis-de-componentes-principales-pca" id="toc-análisis-de-componentes-principales-pca" class="nav-link" data-scroll-target="#análisis-de-componentes-principales-pca">Análisis de componentes principales (PCA)</a></li>
-  <li><a href="#clusterización-con-k-means" id="toc-clusterización-con-k-means" class="nav-link" data-scroll-target="#clusterización-con-k-means">Clusterización con k-means</a>
+  <li><a href="#proyect-overview" id="toc-proyect-overview" class="nav-link active" data-scroll-target="#proyect-overview">Proyect Overview</a></li>
+  <li><a href="#data-loading" id="toc-data-loading" class="nav-link" data-scroll-target="#data-loading">Data Loading</a></li>
+  <li><a href="#principal-component-analysis-pca" id="toc-principal-component-analysis-pca" class="nav-link" data-scroll-target="#principal-component-analysis-pca">Principal Component Analysis (PCA)</a></li>
+  <li><a href="#clustering-with-k-means" id="toc-clustering-with-k-means" class="nav-link" data-scroll-target="#clustering-with-k-means">Clustering with k-means</a>
   <ul class="collapse">
-  <li><a href="#visualizaciones-geoespaciales-con-geopandas." id="toc-visualizaciones-geoespaciales-con-geopandas." class="nav-link" data-scroll-target="#visualizaciones-geoespaciales-con-geopandas.">Visualizaciones Geoespaciales con geopandas.</a></li>
-  <li><a href="#mapa-interactivo-de-ny." id="toc-mapa-interactivo-de-ny." class="nav-link" data-scroll-target="#mapa-interactivo-de-ny.">Mapa interactivo de NY.</a></li>
+  <li><a href="#geospatial-visualizations-with-geopandas." id="toc-geospatial-visualizations-with-geopandas." class="nav-link" data-scroll-target="#geospatial-visualizations-with-geopandas.">Geospatial visualizations with geopandas.</a></li>
+  <li><a href="#interactive-map-of-boston." id="toc-interactive-map-of-boston." class="nav-link" data-scroll-target="#interactive-map-of-boston.">Interactive Map of Boston.</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -137,7 +137,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Análisis del mercado inmobiliario en Estados Unidos</h1>
+<h1 class="title">Real Estate Market Analysis in the United States</h1>
 </div>
 
 
@@ -158,7 +158,7 @@ ul.task-list li input[type="checkbox"] {
 <div>
   <div class="abstract">
     <div class="block-title">Abstract</div>
-    Este informe segmenta los mercados inmobiliarios estadounidenses mediante PCA y K-Means, considerando características de mercado, puntos de interés y datos demográficos. Se documenta la metodología, se interpretan los componentes principales, se perfilan los clústeres y se muestra su distribución espacial.
+    This report segments U.S. housing markets using PCA and K-Means, incorporating market features, points of interest, and demographic data. The methodology is documented, the principal components are interpreted, the clusters are profiled, and their spatial distribution is presented.
   </div>
 </div>
 
@@ -166,60 +166,60 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="descripción-general-del-proyecto" class="level2">
-<h2 class="anchored" data-anchor-id="descripción-general-del-proyecto">Descripción general del proyecto</h2>
-<p>Este informe presenta una segmentación del mercado inmobiliario estadounidense basada en datos a nivel de <strong>código postal/ciudad</strong>. Combinamos indicadores de vivienda (p.&nbsp;ej., precio medio de venta/listado, inventario, días en el mercado) con puntos de interés (POI) de OSM y datos demográficos. Nuestro flujo de trabajo se centra en la estandarización, la reducción de dimensionalidad (<strong>PCA</strong>), la agrupación (<strong>K-Means</strong>) y la visualización geoespacial. Mantenemos el código sin cambios y priorizamos una interpretación clara y reproducible de cada paso.</p>
-<p>Preguntas clave que abordamos: - <em>¿Qué dimensiones latentes resumen mejor la variación entre ubicaciones?</em> - <em>¿Cuántos segmentos de mercado (clústeres) distintos emergen?</em> - <em>¿Qué caracteriza a cada clúster en términos de señales de mercado, POI y datos demográficos?</em> - <em>¿Dónde se ubican geográficamente estos clústeres?</em></p>
+<section id="proyect-overview" class="level2">
+<h2 class="anchored" data-anchor-id="proyect-overview">Proyect Overview</h2>
+<p>This report presents a segmentation of the U.S. real estate market based on ZIP code- and city-level data. We combine housing indicators (e.g., median sale/list price, inventory, days on market) with points of interest (POI) from OSM and demographic variables. Our workflow focuses on standardization, dimensionality reduction (PCA), clustering (K-Means), and geospatial visualization. The code is kept unchanged, and we prioritize a clear and reproducible interpretation of each step.</p>
+<p>Key questions addressed: - <em>Which latent dimensions best summarize the variation across locations?</em> - <em>How many distinct market segments (clusters) emerge?</em> - <em>What characterizes each cluster in terms of market signals, POIs, and demographic attributes?</em> - <em>Where are these clusters geographically located?</em></p>
 <blockquote class="blockquote">
-<p>Nota: Este documento no incluye predicción supervisada de precios. El énfasis está en el descubrimiento e interpretación de la estructura. Pero sería una buena actualización para el proyecto en el futuro.</p>
+<p>Note: This document does not include supervised price prediction. The emphasis is on discovering and interpreting the underlying structure. However, it would be a valuable future extension of the project.</p>
 </blockquote>
 </section>
-<section id="carga-de-datos" class="level2">
-<h2 class="anchored" data-anchor-id="carga-de-datos">Carga de datos</h2>
-<p>Empezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor. <a href="https://www.kaggle.com/datasets/shengkunwang/housets-dataset">Este es el link del dataset:</a></p>
-<p>Como este proyecto lo estamos realizado a través de positron visualizamos en el propio IDE el dataset y vemos que el porcentaje de datos missing es 0 para todas las variables. Es un dataset limpio y listo para analizar.</p>
+<section id="data-loading" class="level2">
+<h2 class="anchored" data-anchor-id="data-loading">Data Loading</h2>
+<p>We begin by loading the main dataset from Kaggle (HousingTS) and performing a brief exploration to better understand its structure. <a href="https://www.kaggle.com/datasets/shengkunwang/housets-dataset">Here is the link to the dataset:</a></p>
+<p>Since this project is being carried out in Positron, we visualize the dataset directly in the IDE and verify that the percentage of missing data is 0 across all variables. It is a clean dataset, ready for analysis.</p>
 </section>
-<section id="análisis-de-componentes-principales-pca" class="level1">
-<h1>Análisis de componentes principales (PCA)</h1>
-<p>Aplicamos <strong>PCA</strong> para capturar la variación dominante entre ubicaciones, reteniendo una proporción predefinida de varianza explicada del <strong>90%</strong>.</p>
-<div id="93f129f5" class="cell" data-execution_count="2">
+<section id="principal-component-analysis-pca" class="level1">
+<h1>Principal Component Analysis (PCA)</h1>
+<p>We apply <strong>PCA</strong> to capture the dominant variation across locations, retaining a predefined proportion of <strong>90%</strong> explained variance.</p>
+<div id="1752ce00" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
-<pre><code>Número de componentes principales: 9
-Varianza explicada por componente: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308
+<pre><code>Principal Components number: 9
+Variation explained: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308
  0.02503939 0.02146856 0.01447887]
-Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393
+Cumulative variation explained: [0.34685209 0.57726581 0.69144634 0.7547183  0.80416085 0.84692393
  0.87196332 0.89343188 0.90791075]</code></pre>
 </div>
 </div>
-<p>Ahora vamos a visualizar la interpretación de PC1 y PC2. Esto nos ayuda a resumir los gradientes generales de mercado, demográficos y de puntos de interés.</p>
-<div id="cd121f07" class="cell" data-execution_count="3">
+<p>Now we visualize the interpretation of PC1 and PC2. This helps us summarize the general gradients of market conditions, demographics, and points of interest.</p>
+<div id="d30546c8" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="EEUU_CLUSTERIZADO_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="US_CLUSTERING_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Ahora vamos a realizar la clusterización y vamos a visualizar el mismo gráfico de dispersion de las componentes principales ya segmentado.</p>
+<p>Now we’ll perform the clustering and visualize the same segmented principal component scatter plot.</p>
 </section>
-<section id="clusterización-con-k-means" class="level1">
-<h1>Clusterización con k-means</h1>
-<div id="a7b4119c" class="cell" data-execution_count="4">
+<section id="clustering-with-k-means" class="level1">
+<h1>Clustering with k-means</h1>
+<div id="0cbdf35c" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
-<pre><code>k con mejor silueta: 4</code></pre>
+<pre><code>k with best silhouette: 4</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="EEUU_CLUSTERIZADO_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="US_CLUSTERING_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Ahora ya visualizamos muy bien cómo se distribuyen estos clusters en función de la PC1 y la PC2.</p>
-<p>Ahora vamos a graficar una tabla para entender estos clusters mejor. Pero primero tenemos que entender qué variables son las que más información nos dan. Por tanto medimos la varianza entre los clusters y obtenemos la lista de variables que mayor varianza dan.</p>
-<div id="352585ed" class="cell" data-execution_count="5">
+<p>We can now clearly see how these clusters are distributed according to PC1 and PC2.</p>
+<p>Now we’ll create a table to understand better these clusters. But first, we need to understand which variables provide the most information. Therefore, we measure the variance between the clusters and obtain the list of variables that contribute the most variance.</p>
+<div id="bc8cf727" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>station                    6.292687
 restaurant                 6.033795
@@ -244,242 +244,242 @@ Total School Enrollment    0.654586
 dtype: float64</code></pre>
 </div>
 </div>
-<p>Una vez teniendo las variables que más información aportan a la diferenciación y al entendimiento de estos clusters. Generamos la tabla.</p>
-<div id="fe707398" class="cell" data-execution_count="6">
+<p>Once we have the variables that provide the most information for distinguishing and understanding these clusters, we generate the table.</p>
+<div id="2b09e5c7" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display" data-execution_count="6">
 <style type="text/css">
-#T_2c504_row0_col0 {
+#T_83b23_row0_col0 {
   background-color: #cedaeb;
   color: #000000;
 }
-#T_2c504_row0_col1 {
+#T_83b23_row0_col1 {
   background-color: #cbd8ee;
   color: #000000;
 }
-#T_2c504_row0_col2 {
+#T_83b23_row0_col2 {
   background-color: #c4d5f3;
   color: #000000;
 }
-#T_2c504_row0_col3 {
+#T_83b23_row0_col3 {
   background-color: #c9d7f0;
   color: #000000;
 }
-#T_2c504_row0_col4, #T_2c504_row0_col6 {
+#T_83b23_row0_col4, #T_83b23_row0_col6 {
   background-color: #c3d5f4;
   color: #000000;
 }
-#T_2c504_row0_col5, #T_2c504_row0_col8 {
+#T_83b23_row0_col5, #T_83b23_row0_col8 {
   background-color: #c6d6f1;
   color: #000000;
 }
-#T_2c504_row0_col7 {
+#T_83b23_row0_col7 {
   background-color: #c5d6f2;
   color: #000000;
 }
-#T_2c504_row0_col9, #T_2c504_row0_col14 {
+#T_83b23_row0_col9, #T_83b23_row0_col14 {
   background-color: #cad8ef;
   color: #000000;
 }
-#T_2c504_row0_col10 {
+#T_83b23_row0_col10 {
   background-color: #bfd3f6;
   color: #000000;
 }
-#T_2c504_row0_col11, #T_2c504_row0_col12, #T_2c504_row0_col18 {
+#T_83b23_row0_col11, #T_83b23_row0_col12, #T_83b23_row0_col18 {
   background-color: #c7d7f0;
   color: #000000;
 }
-#T_2c504_row0_col13 {
+#T_83b23_row0_col13 {
   background-color: #a5c3fe;
   color: #000000;
 }
-#T_2c504_row0_col15 {
+#T_83b23_row0_col15 {
   background-color: #ccd9ed;
   color: #000000;
 }
-#T_2c504_row0_col16, #T_2c504_row0_col17, #T_2c504_row0_col19 {
+#T_83b23_row0_col16, #T_83b23_row0_col17, #T_83b23_row0_col19 {
   background-color: #a6c4fe;
   color: #000000;
 }
-#T_2c504_row1_col0, #T_2c504_row1_col1, #T_2c504_row3_col19 {
+#T_83b23_row1_col0, #T_83b23_row1_col1, #T_83b23_row3_col19 {
   background-color: #d8dce2;
   color: #000000;
 }
-#T_2c504_row1_col2, #T_2c504_row1_col9 {
+#T_83b23_row1_col2, #T_83b23_row1_col9 {
   background-color: #dfdbd9;
   color: #000000;
 }
-#T_2c504_row1_col3, #T_2c504_row3_col13, #T_2c504_row3_col16 {
+#T_83b23_row1_col3, #T_83b23_row3_col13, #T_83b23_row3_col16 {
   background-color: #dbdcde;
   color: #000000;
 }
-#T_2c504_row1_col4 {
+#T_83b23_row1_col4 {
   background-color: #e0dbd8;
   color: #000000;
 }
-#T_2c504_row1_col5 {
+#T_83b23_row1_col5 {
   background-color: #dedcdb;
   color: #000000;
 }
-#T_2c504_row1_col6, #T_2c504_row1_col14, #T_2c504_row3_col0 {
+#T_83b23_row1_col6, #T_83b23_row1_col14, #T_83b23_row3_col0 {
   background-color: #e4d9d2;
   color: #000000;
 }
-#T_2c504_row1_col7, #T_2c504_row1_col15 {
+#T_83b23_row1_col7, #T_83b23_row1_col15 {
   background-color: #cfdaea;
   color: #000000;
 }
-#T_2c504_row1_col8 {
+#T_83b23_row1_col8 {
   background-color: #d1dae9;
   color: #000000;
 }
-#T_2c504_row1_col10 {
+#T_83b23_row1_col10 {
   background-color: #d5dbe5;
   color: #000000;
 }
-#T_2c504_row1_col11, #T_2c504_row1_col12 {
+#T_83b23_row1_col11, #T_83b23_row1_col12 {
   background-color: #cdd9ec;
   color: #000000;
 }
-#T_2c504_row1_col13, #T_2c504_row2_col16 {
+#T_83b23_row1_col13, #T_83b23_row2_col16 {
   background-color: #f59c7d;
   color: #000000;
 }
-#T_2c504_row1_col16 {
+#T_83b23_row1_col16 {
   background-color: #f49a7b;
   color: #000000;
 }
-#T_2c504_row1_col17, #T_2c504_row1_col19 {
+#T_83b23_row1_col17, #T_83b23_row1_col19 {
   background-color: #f4987a;
   color: #000000;
   font-weight: bold;
 }
-#T_2c504_row1_col18 {
+#T_83b23_row1_col18 {
   background-color: #d6dce4;
   color: #000000;
 }
-#T_2c504_row2_col0, #T_2c504_row2_col1, #T_2c504_row2_col2, #T_2c504_row2_col3, #T_2c504_row2_col4, #T_2c504_row2_col5, #T_2c504_row2_col6, #T_2c504_row2_col7, #T_2c504_row2_col8, #T_2c504_row2_col9 {
+#T_83b23_row2_col0, #T_83b23_row2_col1, #T_83b23_row2_col2, #T_83b23_row2_col3, #T_83b23_row2_col4, #T_83b23_row2_col5, #T_83b23_row2_col6, #T_83b23_row2_col7, #T_83b23_row2_col8, #T_83b23_row2_col9 {
   background-color: #b40426;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row2_col10, #T_2c504_row2_col11, #T_2c504_row2_col12 {
+#T_83b23_row2_col10, #T_83b23_row2_col11, #T_83b23_row2_col12 {
   background-color: #cf453c;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row2_col13, #T_2c504_row3_col15 {
+#T_83b23_row2_col13, #T_83b23_row3_col15 {
   background-color: #ed8366;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row2_col14 {
+#T_83b23_row2_col14 {
   background-color: #c83836;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row2_col15 {
+#T_83b23_row2_col15 {
   background-color: #e8765c;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row2_col17 {
+#T_83b23_row2_col17 {
   background-color: #f5a081;
   color: #000000;
 }
-#T_2c504_row2_col18 {
+#T_83b23_row2_col18 {
   background-color: #f08a6c;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row2_col19 {
+#T_83b23_row2_col19 {
   background-color: #f7a889;
   color: #000000;
 }
-#T_2c504_row3_col1 {
+#T_83b23_row3_col1 {
   background-color: #efcebd;
   color: #000000;
 }
-#T_2c504_row3_col2, #T_2c504_row3_col5, #T_2c504_row3_col9 {
+#T_83b23_row3_col2, #T_83b23_row3_col5, #T_83b23_row3_col9 {
   background-color: #f2cab5;
   color: #000000;
 }
-#T_2c504_row3_col3 {
+#T_83b23_row3_col3 {
   background-color: #f0cdbb;
   color: #000000;
 }
-#T_2c504_row3_col4 {
+#T_83b23_row3_col4 {
   background-color: #f3c7b1;
   color: #000000;
 }
-#T_2c504_row3_col6 {
+#T_83b23_row3_col6 {
   background-color: #f2cbb7;
   color: #000000;
 }
-#T_2c504_row3_col7 {
+#T_83b23_row3_col7 {
   background-color: #eb7d62;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row3_col8 {
+#T_83b23_row3_col8 {
   background-color: #ec8165;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row3_col10 {
+#T_83b23_row3_col10 {
   background-color: #d1493f;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row3_col11, #T_2c504_row3_col12 {
+#T_83b23_row3_col11, #T_83b23_row3_col12 {
   background-color: #de614d;
   color: #f1f1f1;
   font-weight: bold;
 }
-#T_2c504_row3_col14 {
+#T_83b23_row3_col14 {
   background-color: #f3c8b2;
   color: #000000;
 }
-#T_2c504_row3_col17 {
+#T_83b23_row3_col17 {
   background-color: #d9dce1;
   color: #000000;
 }
-#T_2c504_row3_col18 {
+#T_83b23_row3_col18 {
   background-color: #ec7f63;
   color: #f1f1f1;
   font-weight: bold;
 }
 </style>
 
-<div id="T_2c504" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<div id="T_83b23" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_2c504-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_83b23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Perfiles de cluster (z-scores estandarizados) — columnas ordenadas por importancia
 </figcaption>
-<div aria-describedby="T_2c504-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table id="T_2c504" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<div aria-describedby="T_83b23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_83b23" class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
-<th id="T_2c504_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">station</th>
-<th id="T_2c504_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">restaurant</th>
-<th id="T_2c504_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">supermarket</th>
-<th id="T_2c504_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">bank</th>
-<th id="T_2c504_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">park</th>
-<th id="T_2c504_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">hospital</th>
-<th id="T_2c504_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">school</th>
-<th id="T_2c504_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">median_list_ppsf</th>
-<th id="T_2c504_level0_col8" class="col_heading level0 col8" data-quarto-table-cell-role="th">median_ppsf</th>
-<th id="T_2c504_level0_col9" class="col_heading level0 col9" data-quarto-table-cell-role="th">bus</th>
-<th id="T_2c504_level0_col10" class="col_heading level0 col10" data-quarto-table-cell-role="th">Median Home Value</th>
-<th id="T_2c504_level0_col11" class="col_heading level0 col11" data-quarto-table-cell-role="th">price</th>
-<th id="T_2c504_level0_col12" class="col_heading level0 col12" data-quarto-table-cell-role="th">median_sale_price</th>
-<th id="T_2c504_level0_col13" class="col_heading level0 col13" data-quarto-table-cell-role="th">Total Housing Units</th>
-<th id="T_2c504_level0_col14" class="col_heading level0 col14" data-quarto-table-cell-role="th">mall</th>
-<th id="T_2c504_level0_col15" class="col_heading level0 col15" data-quarto-table-cell-role="th">median_list_price</th>
-<th id="T_2c504_level0_col16" class="col_heading level0 col16" data-quarto-table-cell-role="th">Total Labor Force</th>
-<th id="T_2c504_level0_col17" class="col_heading level0 col17" data-quarto-table-cell-role="th">Median Commute Time</th>
-<th id="T_2c504_level0_col18" class="col_heading level0 col18" data-quarto-table-cell-role="th">Per Capita Income</th>
-<th id="T_2c504_level0_col19" class="col_heading level0 col19" data-quarto-table-cell-role="th">Total School Enrollment</th>
+<th id="T_83b23_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">station</th>
+<th id="T_83b23_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">restaurant</th>
+<th id="T_83b23_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">supermarket</th>
+<th id="T_83b23_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">bank</th>
+<th id="T_83b23_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">park</th>
+<th id="T_83b23_level0_col5" class="col_heading level0 col5" data-quarto-table-cell-role="th">hospital</th>
+<th id="T_83b23_level0_col6" class="col_heading level0 col6" data-quarto-table-cell-role="th">school</th>
+<th id="T_83b23_level0_col7" class="col_heading level0 col7" data-quarto-table-cell-role="th">median_list_ppsf</th>
+<th id="T_83b23_level0_col8" class="col_heading level0 col8" data-quarto-table-cell-role="th">median_ppsf</th>
+<th id="T_83b23_level0_col9" class="col_heading level0 col9" data-quarto-table-cell-role="th">bus</th>
+<th id="T_83b23_level0_col10" class="col_heading level0 col10" data-quarto-table-cell-role="th">Median Home Value</th>
+<th id="T_83b23_level0_col11" class="col_heading level0 col11" data-quarto-table-cell-role="th">price</th>
+<th id="T_83b23_level0_col12" class="col_heading level0 col12" data-quarto-table-cell-role="th">median_sale_price</th>
+<th id="T_83b23_level0_col13" class="col_heading level0 col13" data-quarto-table-cell-role="th">Total Housing Units</th>
+<th id="T_83b23_level0_col14" class="col_heading level0 col14" data-quarto-table-cell-role="th">mall</th>
+<th id="T_83b23_level0_col15" class="col_heading level0 col15" data-quarto-table-cell-role="th">median_list_price</th>
+<th id="T_83b23_level0_col16" class="col_heading level0 col16" data-quarto-table-cell-role="th">Total Labor Force</th>
+<th id="T_83b23_level0_col17" class="col_heading level0 col17" data-quarto-table-cell-role="th">Median Commute Time</th>
+<th id="T_83b23_level0_col18" class="col_heading level0 col18" data-quarto-table-cell-role="th">Per Capita Income</th>
+<th id="T_83b23_level0_col19" class="col_heading level0 col19" data-quarto-table-cell-role="th">Total School Enrollment</th>
 </tr>
 <tr class="even">
 <th class="index_name level0" data-quarto-table-cell-role="th">cluster</th>
@@ -507,96 +507,96 @@ Table&nbsp;1: Perfiles de cluster (z-scores estandarizados) — columnas ordenad
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_2c504_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
-<td id="T_2c504_row0_col0" class="data row0 col0">-0.22</td>
-<td id="T_2c504_row0_col1" class="data row0 col1">-0.26</td>
-<td id="T_2c504_row0_col2" class="data row0 col2">-0.36</td>
-<td id="T_2c504_row0_col3" class="data row0 col3">-0.29</td>
-<td id="T_2c504_row0_col4" class="data row0 col4">-0.37</td>
-<td id="T_2c504_row0_col5" class="data row0 col5">-0.32</td>
-<td id="T_2c504_row0_col6" class="data row0 col6">-0.36</td>
-<td id="T_2c504_row0_col7" class="data row0 col7">-0.34</td>
-<td id="T_2c504_row0_col8" class="data row0 col8">-0.33</td>
-<td id="T_2c504_row0_col9" class="data row0 col9">-0.27</td>
-<td id="T_2c504_row0_col10" class="data row0 col10">-0.42</td>
-<td id="T_2c504_row0_col11" class="data row0 col11">-0.30</td>
-<td id="T_2c504_row0_col12" class="data row0 col12">-0.30</td>
-<td id="T_2c504_row0_col13" class="data row0 col13">-0.72</td>
-<td id="T_2c504_row0_col14" class="data row0 col14">-0.28</td>
-<td id="T_2c504_row0_col15" class="data row0 col15">-0.24</td>
-<td id="T_2c504_row0_col16" class="data row0 col16">-0.72</td>
-<td id="T_2c504_row0_col17" class="data row0 col17">-0.71</td>
-<td id="T_2c504_row0_col18" class="data row0 col18">-0.30</td>
-<td id="T_2c504_row0_col19" class="data row0 col19">-0.71</td>
+<td id="T_83b23_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</td>
+<td id="T_83b23_row0_col0" class="data row0 col0">-0.22</td>
+<td id="T_83b23_row0_col1" class="data row0 col1">-0.26</td>
+<td id="T_83b23_row0_col2" class="data row0 col2">-0.36</td>
+<td id="T_83b23_row0_col3" class="data row0 col3">-0.29</td>
+<td id="T_83b23_row0_col4" class="data row0 col4">-0.37</td>
+<td id="T_83b23_row0_col5" class="data row0 col5">-0.32</td>
+<td id="T_83b23_row0_col6" class="data row0 col6">-0.36</td>
+<td id="T_83b23_row0_col7" class="data row0 col7">-0.34</td>
+<td id="T_83b23_row0_col8" class="data row0 col8">-0.33</td>
+<td id="T_83b23_row0_col9" class="data row0 col9">-0.27</td>
+<td id="T_83b23_row0_col10" class="data row0 col10">-0.42</td>
+<td id="T_83b23_row0_col11" class="data row0 col11">-0.30</td>
+<td id="T_83b23_row0_col12" class="data row0 col12">-0.30</td>
+<td id="T_83b23_row0_col13" class="data row0 col13">-0.72</td>
+<td id="T_83b23_row0_col14" class="data row0 col14">-0.28</td>
+<td id="T_83b23_row0_col15" class="data row0 col15">-0.24</td>
+<td id="T_83b23_row0_col16" class="data row0 col16">-0.72</td>
+<td id="T_83b23_row0_col17" class="data row0 col17">-0.71</td>
+<td id="T_83b23_row0_col18" class="data row0 col18">-0.30</td>
+<td id="T_83b23_row0_col19" class="data row0 col19">-0.71</td>
 </tr>
 <tr class="even">
-<td id="T_2c504_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
-<td id="T_2c504_row1_col0" class="data row1 col0">-0.07</td>
-<td id="T_2c504_row1_col1" class="data row1 col1">-0.08</td>
-<td id="T_2c504_row1_col2" class="data row1 col2">0.04</td>
-<td id="T_2c504_row1_col3" class="data row1 col3">-0.03</td>
-<td id="T_2c504_row1_col4" class="data row1 col4">0.06</td>
-<td id="T_2c504_row1_col5" class="data row1 col5">0.03</td>
-<td id="T_2c504_row1_col6" class="data row1 col6">0.11</td>
-<td id="T_2c504_row1_col7" class="data row1 col7">-0.20</td>
-<td id="T_2c504_row1_col8" class="data row1 col8">-0.18</td>
-<td id="T_2c504_row1_col9" class="data row1 col9">0.04</td>
-<td id="T_2c504_row1_col10" class="data row1 col10">-0.12</td>
-<td id="T_2c504_row1_col11" class="data row1 col11">-0.23</td>
-<td id="T_2c504_row1_col12" class="data row1 col12">-0.22</td>
-<td id="T_2c504_row1_col13" class="data row1 col13">0.98</td>
-<td id="T_2c504_row1_col14" class="data row1 col14">0.12</td>
-<td id="T_2c504_row1_col15" class="data row1 col15">-0.19</td>
-<td id="T_2c504_row1_col16" class="data row1 col16">1.00</td>
-<td id="T_2c504_row1_col17" class="data row1 col17">1.00</td>
-<td id="T_2c504_row1_col18" class="data row1 col18">-0.10</td>
-<td id="T_2c504_row1_col19" class="data row1 col19">1.01</td>
+<td id="T_83b23_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</td>
+<td id="T_83b23_row1_col0" class="data row1 col0">-0.07</td>
+<td id="T_83b23_row1_col1" class="data row1 col1">-0.08</td>
+<td id="T_83b23_row1_col2" class="data row1 col2">0.04</td>
+<td id="T_83b23_row1_col3" class="data row1 col3">-0.03</td>
+<td id="T_83b23_row1_col4" class="data row1 col4">0.06</td>
+<td id="T_83b23_row1_col5" class="data row1 col5">0.03</td>
+<td id="T_83b23_row1_col6" class="data row1 col6">0.11</td>
+<td id="T_83b23_row1_col7" class="data row1 col7">-0.20</td>
+<td id="T_83b23_row1_col8" class="data row1 col8">-0.18</td>
+<td id="T_83b23_row1_col9" class="data row1 col9">0.04</td>
+<td id="T_83b23_row1_col10" class="data row1 col10">-0.12</td>
+<td id="T_83b23_row1_col11" class="data row1 col11">-0.23</td>
+<td id="T_83b23_row1_col12" class="data row1 col12">-0.22</td>
+<td id="T_83b23_row1_col13" class="data row1 col13">0.98</td>
+<td id="T_83b23_row1_col14" class="data row1 col14">0.12</td>
+<td id="T_83b23_row1_col15" class="data row1 col15">-0.19</td>
+<td id="T_83b23_row1_col16" class="data row1 col16">1.00</td>
+<td id="T_83b23_row1_col17" class="data row1 col17">1.00</td>
+<td id="T_83b23_row1_col18" class="data row1 col18">-0.10</td>
+<td id="T_83b23_row1_col19" class="data row1 col19">1.01</td>
 </tr>
 <tr class="odd">
-<td id="T_2c504_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
-<td id="T_2c504_row2_col0" class="data row2 col0">4.96</td>
-<td id="T_2c504_row2_col1" class="data row2 col1">4.89</td>
-<td id="T_2c504_row2_col2" class="data row2 col2">4.86</td>
-<td id="T_2c504_row2_col3" class="data row2 col3">4.80</td>
-<td id="T_2c504_row2_col4" class="data row2 col4">4.51</td>
-<td id="T_2c504_row2_col5" class="data row2 col5">4.14</td>
-<td id="T_2c504_row2_col6" class="data row2 col6">3.95</td>
-<td id="T_2c504_row2_col7" class="data row2 col7">3.33</td>
-<td id="T_2c504_row2_col8" class="data row2 col8">3.09</td>
-<td id="T_2c504_row2_col9" class="data row2 col9">2.96</td>
-<td id="T_2c504_row2_col10" class="data row2 col10">1.70</td>
-<td id="T_2c504_row2_col11" class="data row2 col11">1.70</td>
-<td id="T_2c504_row2_col12" class="data row2 col12">1.69</td>
-<td id="T_2c504_row2_col13" class="data row2 col13">1.21</td>
-<td id="T_2c504_row2_col14" class="data row2 col14">1.77</td>
-<td id="T_2c504_row2_col15" class="data row2 col15">1.32</td>
-<td id="T_2c504_row2_col16" class="data row2 col16">0.98</td>
-<td id="T_2c504_row2_col17" class="data row2 col17">0.93</td>
-<td id="T_2c504_row2_col18" class="data row2 col18">1.15</td>
-<td id="T_2c504_row2_col19" class="data row2 col19">0.85</td>
+<td id="T_83b23_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</td>
+<td id="T_83b23_row2_col0" class="data row2 col0">4.96</td>
+<td id="T_83b23_row2_col1" class="data row2 col1">4.89</td>
+<td id="T_83b23_row2_col2" class="data row2 col2">4.86</td>
+<td id="T_83b23_row2_col3" class="data row2 col3">4.80</td>
+<td id="T_83b23_row2_col4" class="data row2 col4">4.51</td>
+<td id="T_83b23_row2_col5" class="data row2 col5">4.14</td>
+<td id="T_83b23_row2_col6" class="data row2 col6">3.95</td>
+<td id="T_83b23_row2_col7" class="data row2 col7">3.33</td>
+<td id="T_83b23_row2_col8" class="data row2 col8">3.09</td>
+<td id="T_83b23_row2_col9" class="data row2 col9">2.96</td>
+<td id="T_83b23_row2_col10" class="data row2 col10">1.70</td>
+<td id="T_83b23_row2_col11" class="data row2 col11">1.70</td>
+<td id="T_83b23_row2_col12" class="data row2 col12">1.69</td>
+<td id="T_83b23_row2_col13" class="data row2 col13">1.21</td>
+<td id="T_83b23_row2_col14" class="data row2 col14">1.77</td>
+<td id="T_83b23_row2_col15" class="data row2 col15">1.32</td>
+<td id="T_83b23_row2_col16" class="data row2 col16">0.98</td>
+<td id="T_83b23_row2_col17" class="data row2 col17">0.93</td>
+<td id="T_83b23_row2_col18" class="data row2 col18">1.15</td>
+<td id="T_83b23_row2_col19" class="data row2 col19">0.85</td>
 </tr>
 <tr class="even">
-<td id="T_2c504_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
-<td id="T_2c504_row3_col0" class="data row3 col0">0.12</td>
-<td id="T_2c504_row3_col1" class="data row3 col1">0.34</td>
-<td id="T_2c504_row3_col2" class="data row3 col2">0.42</td>
-<td id="T_2c504_row3_col3" class="data row3 col3">0.35</td>
-<td id="T_2c504_row3_col4" class="data row3 col4">0.46</td>
-<td id="T_2c504_row3_col5" class="data row3 col5">0.42</td>
-<td id="T_2c504_row3_col6" class="data row3 col6">0.40</td>
-<td id="T_2c504_row3_col7" class="data row3 col7">1.26</td>
-<td id="T_2c504_row3_col8" class="data row3 col8">1.22</td>
-<td id="T_2c504_row3_col9" class="data row3 col9">0.41</td>
-<td id="T_2c504_row3_col10" class="data row3 col10">1.67</td>
-<td id="T_2c504_row3_col11" class="data row3 col11">1.50</td>
-<td id="T_2c504_row3_col12" class="data row3 col12">1.50</td>
-<td id="T_2c504_row3_col13" class="data row3 col13">-0.03</td>
-<td id="T_2c504_row3_col14" class="data row3 col14">0.45</td>
-<td id="T_2c504_row3_col15" class="data row3 col15">1.21</td>
-<td id="T_2c504_row3_col16" class="data row3 col16">-0.03</td>
-<td id="T_2c504_row3_col17" class="data row3 col17">-0.05</td>
-<td id="T_2c504_row3_col18" class="data row3 col18">1.24</td>
-<td id="T_2c504_row3_col19" class="data row3 col19">-0.07</td>
+<td id="T_83b23_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</td>
+<td id="T_83b23_row3_col0" class="data row3 col0">0.12</td>
+<td id="T_83b23_row3_col1" class="data row3 col1">0.34</td>
+<td id="T_83b23_row3_col2" class="data row3 col2">0.42</td>
+<td id="T_83b23_row3_col3" class="data row3 col3">0.35</td>
+<td id="T_83b23_row3_col4" class="data row3 col4">0.46</td>
+<td id="T_83b23_row3_col5" class="data row3 col5">0.42</td>
+<td id="T_83b23_row3_col6" class="data row3 col6">0.40</td>
+<td id="T_83b23_row3_col7" class="data row3 col7">1.26</td>
+<td id="T_83b23_row3_col8" class="data row3 col8">1.22</td>
+<td id="T_83b23_row3_col9" class="data row3 col9">0.41</td>
+<td id="T_83b23_row3_col10" class="data row3 col10">1.67</td>
+<td id="T_83b23_row3_col11" class="data row3 col11">1.50</td>
+<td id="T_83b23_row3_col12" class="data row3 col12">1.50</td>
+<td id="T_83b23_row3_col13" class="data row3 col13">-0.03</td>
+<td id="T_83b23_row3_col14" class="data row3 col14">0.45</td>
+<td id="T_83b23_row3_col15" class="data row3 col15">1.21</td>
+<td id="T_83b23_row3_col16" class="data row3 col16">-0.03</td>
+<td id="T_83b23_row3_col17" class="data row3 col17">-0.05</td>
+<td id="T_83b23_row3_col18" class="data row3 col18">1.24</td>
+<td id="T_83b23_row3_col19" class="data row3 col19">-0.07</td>
 </tr>
 </tbody>
 </table>
@@ -605,87 +605,75 @@ Table&nbsp;1: Perfiles de cluster (z-scores estandarizados) — columnas ordenad
 </div>
 </div>
 </div>
-<p>Ahora ya podemos interpretar los resultados y definir los 4 clusters.</p>
-<p><strong>Cluster 0 — “Zonas rezagadas o de baja actividad urbana”</strong></p>
-<p>Prácticamente todas las variables están en negativo, la mayoría entre –0.2 y –0.7.</p>
-<p>Destacan valores bajos en:</p>
-<p>station, restaurant, supermarket, bank, park, hospital, school → indica baja densidad de servicios y equipamientos.</p>
-<p>Total Housing Units, Total Labor Force, Per Capita Income, Total School Enrollment también por debajo de la media → zonas menos pobladas y con menor dinamismo económico.</p>
-<p>En conjunto: este grupo representa áreas periféricas o rurales, con menor acceso a infraestructura, menor actividad económica y precios inmobiliarios más bajos.</p>
-<p><strong>Cluster 1 — “Zonas residenciales estables”</strong></p>
-<p>La mayoría de los z-scores rondan 0, lo que indica valores promedio respecto al conjunto.</p>
-<p>Algunas variables ligeramente por encima del promedio:</p>
-<p>mall, park, school, Total Housing Units, Total Labor Force, Median Commute Time, Total School Enrollment → áreas con actividad moderada, algo más residenciales y con cierta dotación de servicios.</p>
-<p>Variables por debajo de la media en median_list_price, price, median_ppsf → precios algo más bajos que el promedio.</p>
-<p>En conjunto: zonas residenciales medias, equilibradas, con buena dotación pero sin excesos de precios o servicios extremos.</p>
-<p><strong>Cluster 2 — “Núcleos urbanos altamente desarrollados”</strong></p>
-<p>Es el grupo más extremo y distintivo:</p>
-<p>z-scores de +4 a +5 en casi todas las variables principales (station, restaurant, supermarket, bank, park, hospital, school).</p>
-<p>También valores altos en variables económicas e inmobiliarias (median_list_ppsf, median_ppsf, price, Median Home Value).</p>
-<p>Representa claramente las áreas centrales o premium de la ciudad:</p>
-<p>Altísima concentración de servicios, infraestructura y precios de vivienda elevados.</p>
-<p>Alta densidad poblacional y actividad económica.</p>
-<p>Este es el cluster de mayor centralidad, riqueza y desarrollo urbano.</p>
-<p><strong>Cluster 3 — “Zonas en transición o subcentros emergentes”</strong></p>
-<p>z-scores positivos moderados (entre +0.3 y +1.5) en muchas variables.</p>
-<p>Destacan:</p>
-<p>median_list_ppsf, median_ppsf, median_sale_price, Median Home Value, Per Capita Income → por encima de la media.</p>
-<p>station, restaurant, supermarket, park, hospital → también algo superiores.</p>
-<p>A diferencia del cluster 2, los valores no son extremos → zonas urbanas consolidadas pero no top, posiblemente barrios intermedios o en expansión, con precios en crecimiento y buena accesibilidad.</p>
-<section id="visualizaciones-geoespaciales-con-geopandas." class="level2">
-<h2 class="anchored" data-anchor-id="visualizaciones-geoespaciales-con-geopandas.">Visualizaciones Geoespaciales con geopandas.</h2>
-<p>La cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&amp;layergroup=ZIP%20Code%20Tabulation%20Areas</p>
-<section id="lectura-de-los-datos-geoespaciales." class="level4">
-<h4 class="anchored" data-anchor-id="lectura-de-los-datos-geoespaciales.">Lectura de los datos geoespaciales.</h4>
-<p>Primero visualizamos el mapa completo de EEUU con los clusters.</p>
-<div id="c3db3fee" class="cell" data-execution_count="8">
+<p>Now we can interpret the results and define the 4 clusters.</p>
+<p><strong>Cluster 0 — “Lagging areas or low-urban-activity zones”</strong></p>
+<p>Practically all variables are negative, most between –0.2 and –0.7.</p>
+<p>Low values stand out in:</p>
+<p>station, restaurant, supermarket, bank, park, hospital, school → indicates low density of services and facilities.</p>
+<p>Total Housing Units, Total Labor Force, Per Capita Income, Total School Enrollment also below average → less populated areas with lower economic dynamism.</p>
+<p>Overall: this group represents peripheral or rural areas, with limited access to infrastructure, lower economic activity, and lower real estate prices.</p>
+<p><strong>Cluster 1 — “Stable residential areas”</strong></p>
+<p>Most z-scores are around 0, indicating average values relative to the full dataset.</p>
+<p>Some variables slightly above average:</p>
+<p>mall, park, school, Total Housing Units, Total Labor Force, Median Commute Time, Total School Enrollment → areas with moderate activity, somewhat more residential, and with a reasonable supply of services.</p>
+<p>Variables below average in median_list_price, price, median_ppsf → somewhat lower prices than the overall average.</p>
+<p>Overall: mid-range residential areas, balanced, with a good level of amenities but without extreme prices or service concentrations.</p>
+<p><strong>Cluster 2 — “Highly developed urban cores”</strong></p>
+<p>This is the most extreme and distinctive group:</p>
+<p>z-scores from +4 to +5 in almost all key variables (station, restaurant, supermarket, bank, park, hospital, school).</p>
+<p>Also high values in economic and real-estate variables (median_list_ppsf, median_ppsf, price, Median Home Value).</p>
+<p>It clearly represents the central or premium areas of the city:</p>
+<p>Very high concentration of services, infrastructure, and elevated housing prices.</p>
+<p>High population density and economic activity.</p>
+<p>This is the cluster with the greatest centrality, wealth, and urban development.</p>
+<p><strong>Cluster 3 — “Transition zones or emerging subcenters”</strong></p>
+<p>Moderate positive z-scores (between +0.3 and +1.5) in many variables.</p>
+<p>Notable:</p>
+<p>median_list_ppsf, median_ppsf, median_sale_price, Median Home Value, Per Capita Income → above average.</p>
+<p>station, restaurant, supermarket, park, hospital → also somewhat higher.</p>
+<p>Unlike cluster 2, the values are not extreme → consolidated but not top-tier urban areas, possibly intermediate or expanding neighborhoods, with rising prices and good accessibility.</p>
+<section id="geospatial-visualizations-with-geopandas." class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-visualizations-with-geopandas.">Geospatial visualizations with geopandas.</h2>
+<p>We obtain the cartography from the U.S. Census here: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&amp;layergroup=ZIP%20Code%20Tabulation%20Areas</p>
+<section id="reading-the-geospatial-data." class="level4">
+<h4 class="anchored" data-anchor-id="reading-the-geospatial-data.">Reading the geospatial data.</h4>
+<p>First we visualize the clusters across the entire U.S.</p>
+<div id="8e3a0c69" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="EEUU_CLUSTERIZADO_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="US_CLUSTERING_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Luego visualizamos el mapa interactivo de NY.</p>
+<p>Then we create a interactive map zoomed into a city, in this case Boston (BOS).</p>
 </section>
 </section>
-<section id="mapa-interactivo-de-ny." class="level2">
-<h2 class="anchored" data-anchor-id="mapa-interactivo-de-ny.">Mapa interactivo de NY.</h2>
-<p>(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)</p>
-<iframe src="NY_map.html" width="100%" height="600px" style="border:none;">
+<section id="interactive-map-of-boston." class="level2">
+<h2 class="anchored" data-anchor-id="interactive-map-of-boston.">Interactive Map of Boston.</h2>
+<p>(It would be cool to do this for all cities, but my PC isn’t able to render it.)</p>
+<iframe src="BOS_map.html" width="100%" height="600px" style="border:none;">
 </iframe>
-<p><strong>Cluster 0 (Azul grisaceo): Zonas rezagadas o de baja actividad urbana</strong></p>
-<p>Este clúster domina la mayor parte del mapa:</p>
-<p>Todo el arco sur de New Jersey.</p>
-<p>Gran parte de Connecticut.</p>
-<p>Mucho del interior de Long Island.</p>
-<p>Zonas alejadas del centro de NY.</p>
-<p><strong>Cluster 1 (Gris): zonas residenciales estables.</strong></p>
-<p>Este clúster aparece:</p>
-<p>Rodeando el núcleo amarillo, especialmente en Brooklyn y Queens.</p>
-<p>También en partes de Newark y otras ciudades cercanas al núcleo de NY.</p>
-<p>Forma un cinturón morado alrededor de Manhattan.</p>
-<p><strong>Cluster 2 (Amarillo): las zonas más ricas y densas.</strong></p>
-<p>Este clúster aparece casi exclusivamente en el centro de la ciudad de Nueva York, concretamente:</p>
-<p>Manhattan, especialmente Midtown y parte del Downtown.</p>
-<p>Se observa como un núcleo amarillo muy concentrado y sin dispersión.</p>
-<p><strong>Cluster 3 (Azul oscuro): Zonas en transición o subcentros emergentes.</strong></p>
-<p>El clúster 3 está muy distribuido, destacando:</p>
-<p>Amplias zonas de Long Island.</p>
-<p>Partes del norte de la ciudad, como Westchester County.</p>
-<p>Áreas suburbanas en New Jersey próximas a la frontera con NY.</p>
+<p><strong>Cluster 0 (grey blue): Lagging areas or zones with low urban activity</strong></p>
+<p>These areas are mainly located on the periphery of the metropolitan region. They tend to correspond to less dense municipalities with lower availability of public transportation, services, and economic activity. They are characterized by more dispersed urban structures, lower intensity, and less dynamic housing markets. They represent the outer edge of Boston’s area of influence, where extensive suburban or semi-rural environments dominate.</p>
+<p><strong>Cluster 1 (Grey): Stable residential areas</strong>**</p>
+<p>This group appears in both consolidated suburbs and areas with a good balance between services, housing, and connectivity. These are typical middle-class zones with sufficient amenities, moderate prices, and well-established residential patterns. They function as stable communities—neither the most affordable nor the most exclusive—offering intermediate urban standards.</p>
+<p><strong>Cluster 2 (Yellow): The wealthiest and densest areas</strong></p>
+<p>Located in Boston’s urban core and its immediate surroundings, this cluster highlights the areas with the highest economic intensity, service density, transportation access, and real estate value. It includes the most central, economically active, and attractive neighborhoods. Its limited spatial extent underscores its exclusivity: these are the metropolitan area’s key hubs, where wealth and urban dynamism concentrate.</p>
+<p><strong>Cluster 3 (Dark blue): Transition zones or emerging subcenters</strong></p>
+<p>Distributed around the main core, these areas show intermediate characteristics but with indicators pointing toward growth, appreciation, or urban transformation. They are neighborhoods or municipalities that do not reach the intensity of the central core but exhibit higher levels of services, real estate value, or economic activity than more traditional suburbs. They represent zones where new urban hubs are developing or where a gradual consolidation process is taking place.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
-<td style="text-align: center;"><strong>NOTA</strong></td>
+<td style="text-align: center;"><strong>NOTE</strong></td>
 </tr>
 </tbody>
 </table>
-<p>La clasificación geoespacial mostrada en el mapa de Nueva York procede de un proceso de clusterización realizado a escala nacional. Es decir, los cuatro clústeres no se han generado exclusivamente con datos de Nueva York, sino con una base de datos mucho más amplia que incluye miles de códigos postales y áreas metropolitanas de todo Estados Unidos.</p>
-<p>Esto implica que los patrones detectados —y, por tanto, la asignación de cada zona de Nueva York a uno u otro clúster— se basan en comparaciones entre ciudades muy diferentes entre sí, como Los Ángeles, Chicago, Dallas, Seattle, Miami, Boston o Denver. El modelo identifica grupos según tendencias nacionales de precios de vivienda, densidad de servicios, transporte, ingresos, oferta comercial y otros indicadores socioeconómicos.</p>
-<p>Dado que los clústeres se forman a partir de este conjunto amplio y heterogéneo, la segmentación resultante describe cómo encajan los barrios de Nueva York dentro del panorama inmobiliario nacional, no únicamente dentro de su propio contexto local. Por ejemplo, Manhattan aparece en el clúster de mayor nivel porque, al compararse con ciudades de todo el país, se sitúa consistentemente entre las zonas con mayor densidad económica y valor inmobiliario.</p>
-<p>Si se quisiera obtener una clasificación más ajustada a las dinámicas internas de Nueva York, se podría repetir el proceso empleando únicamente los datos de esta ciudad. Un enfoque así —por ejemplo aplicando PCA para reducción de dimensionalidad y posteriormente k-means para generar nuevos clústeres— produciría grupos adaptados exclusivamente a las variaciones internas de Nueva York, sin influencia de los patrones del resto del país.</p>
+<p>The geospatial classification shown on the Boston map comes from a clustering process performed at the national scale. In other words, the four clusters were not generated exclusively using Boston data, but with a much larger dataset that includes thousands of ZIP codes and metropolitan areas across the United States.</p>
+<p>This means that the patterns detected —and therefore the assignment of each Boston area to one cluster or another— are based on comparisons among cities that are very different from one another, such as Los Angeles, Chicago, Dallas, Seattle, Miami, NY, or Denver. The model identifies groups according to national trends in housing prices, service density, transportation, income, commercial supply, and other socioeconomic indicators.</p>
+<p>Because the clusters were formed using this broad and heterogeneous dataset, the resulting segmentation describes how Boston neighborhoods fit within the national real estate landscape, not just within their own local context. For example, Boston’s urban core appears in the highest-level cluster because, when compared to cities across the country, it consistently ranks among the areas with the greatest economic density and real estate value.</p>
+<p>If one wanted a classification more closely aligned with Boston’s internal dynamics, the process could be repeated using data only from this city. Such an approach for instance, applying PCA for dimensionality reduction and then k-means to generate new clusters would produce groups tailored exclusively to Boston’s internal variation, without influence from patterns elsewhere in the country.</p>
 
 
 </section>
