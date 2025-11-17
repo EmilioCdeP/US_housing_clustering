@@ -158,6 +158,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#clusterización-con-k-means" id="toc-clusterización-con-k-means" class="nav-link" data-scroll-target="#clusterización-con-k-means">Clusterización con k-means</a>
   <ul class="collapse">
   <li><a href="#visualizaciones-geoespaciales-con-geopandas." id="toc-visualizaciones-geoespaciales-con-geopandas." class="nav-link" data-scroll-target="#visualizaciones-geoespaciales-con-geopandas.">Visualizaciones Geoespaciales con geopandas.</a></li>
+  <li><a href="#mapa-interactivo-de-ny." id="toc-mapa-interactivo-de-ny." class="nav-link" data-scroll-target="#mapa-interactivo-de-ny.">Mapa interactivo de NY.</a></li>
+  <li><a href="#molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo" id="toc-molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo" class="nav-link" data-scroll-target="#molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo">(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -212,7 +214,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="análisis-de-componentes-principales-pca" class="level1">
 <h1>Análisis de componentes principales (PCA)</h1>
 <p>Aplicamos <strong>PCA</strong> para capturar la variación dominante entre ubicaciones, reteniendo una proporción predefinida de varianza explicada del <strong>90%</strong>.</p>
-<div id="3309ea76" class="cell" data-execution_count="2">
+<div id="4a83262f" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Número de componentes principales: 9
 Varianza explicada por componente: [0.34685209 0.23041372 0.11418052 0.06327196 0.04944255 0.04276308
@@ -222,7 +224,7 @@ Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.804
 </div>
 </div>
 <p>Ahora vamos a visualizar la interpretación de PC1 y PC2. Esto nos ayuda a resumir los gradientes generales de mercado, demográficos y de puntos de interés.</p>
-<div id="1bf2d522" class="cell" data-execution_count="3">
+<div id="10ece449" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(pca_df[<span class="st">"PC1"</span>], pca_df[<span class="st">"PC2"</span>], s<span class="op">=</span><span class="dv">8</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"PC1"</span>)</span>
@@ -241,7 +243,7 @@ Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.804
 </section>
 <section id="clusterización-con-k-means" class="level1">
 <h1>Clusterización con k-means</h1>
-<div id="fc15a083" class="cell" data-execution_count="4">
+<div id="5c087cba" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>k con mejor silueta: 4</code></pre>
 </div>
@@ -255,8 +257,8 @@ Varianza explicada acumulada: [0.34685209 0.57726581 0.69144634 0.7547183  0.804
 </div>
 <p>Ahora ya visualizamos muy bien cómo se distribuyen estos clusters en función de la PC1 y la PC2.</p>
 <p>Ahora vamos a graficar una tabla para entender estos clusters mejor. Pero primero tenemos que entender qué variables son las que más información nos dan. Por tanto medimos la varianza entre los clusters y obtenemos la lista de variables que mayor varianza dan.</p>
-<div id="fcebc6c0" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div id="9b06261c" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>station                    6.292687
 restaurant                 6.033795
 supermarket                5.931101
@@ -313,7 +315,7 @@ dtype: float64</code></pre>
 <p>La cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&amp;layergroup=ZIP%20Code%20Tabulation%20Areas</p>
 <section id="lectura-de-los-datos-geoespaciales." class="level4">
 <h4 class="anchored" data-anchor-id="lectura-de-los-datos-geoespaciales.">Lectura de los datos geoespaciales.</h4>
-<div id="72962aff" class="cell" data-execution_count="7">
+<div id="f0d9bc24" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>zcta <span class="op">=</span> gpd.read_file(<span class="st">"C:/EMILIO/PROYECTOS PERSONALES EN PYTHON/US_housing_clustering/data/Shapefiles/tl_2020_us_zcta520.shp"</span>)</span>
@@ -342,7 +344,7 @@ dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div id="c40ab3a9" class="cell" data-execution_count="8">
+<div id="ba262a2f" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar por una ciudad</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ciudad <span class="op">=</span> <span class="st">"NY"</span>  <span class="co"># cámbialo por el nombre de la ciudad que te interese</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>gdf_city <span class="op">=</span> gdf[gdf[<span class="st">"city"</span>] <span class="op">==</span> ciudad].copy()</span>
@@ -373,7 +375,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="c7843eb2" class="cell" data-execution_count="9">
+<div id="2347cf08" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -383,7 +385,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 <p>Le incorporamos zoom para poder verlo desde más cerca.</p>
-<div id="35d4761c" class="cell" data-execution_count="10">
+<div id="88561b1b" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -392,7 +394,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="24486341" class="cell" data-execution_count="11">
+<div id="45785b76" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -401,12 +403,12 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="63c425d6" class="cell" data-execution_count="12">
+<div id="738b9b23" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>Mapa interactivo guardado en 'mapa_clusters_interactivo.html'</code></pre>
 </div>
 </div>
-<div id="03cba828" class="cell" data-execution_count="13">
+<div id="092b3ed1" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gdf_w <span class="op">=</span> gdf.to_crs(epsg<span class="op">=</span><span class="dv">4326</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>mG <span class="op">=</span> gdf_w.explore(</span>
@@ -420,9 +422,17 @@ Name: count, dtype: int64</code></pre>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>mG.save(<span class="st">"mapa_clusters_interactivo_global.html"</span>)</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
-
 </section>
+</section>
+<section id="mapa-interactivo-de-ny." class="level2">
+<h2 class="anchored" data-anchor-id="mapa-interactivo-de-ny.">Mapa interactivo de NY.</h2>
+</section>
+<section id="molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo" class="level2">
+<h2 class="anchored" data-anchor-id="molaría-poder-hacerlo-con-todas-las-ciudades-pero-mi-pc-no-es-capaz-de-renderizarlo">(Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)</h2>
+<iframe src="mapa_clusters_interactivo_global.html" width="100%" height="600px" style="border:none;">
+</iframe>
+
+
 </section>
 </section>
 

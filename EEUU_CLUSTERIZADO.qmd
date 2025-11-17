@@ -578,7 +578,7 @@ plt.show()
 
 ```{python}
 #| eval: true
-#| echo: false
+#| echo: true
 #| include: true
 
 # ==============================
@@ -608,9 +608,20 @@ print("Mapa interactivo guardado en 'mapa_clusters_interactivo.html'")
 
 ```
 
+## Mapa interactivo de NY. 
+ (Molaría poder hacerlo con todas las ciudades pero mi PC no es capaz de renderizarlo)
+
+<iframe src="mapa_clusters_interactivo.html" width="100%" height="600px" style="border:none;">
+
+</iframe>
+
 ```{python}
 #| eval: false
 #| include: true
+
+# ==============================
+# ESTE SERÍA EL CÓDIGO A AJECUTAR SI QUIERES VISUALIZAR TODAS LAS CIUDADES EN UN MAPA
+# QUE MI PC NO PUEDE RENDERIZARLO.
 gdf_w = gdf.to_crs(epsg=4326)
 
 mG = gdf_w.explore(
@@ -624,4 +635,7 @@ mG = gdf_w.explore(
 mG.save("mapa_clusters_interactivo_global.html")
 print("Mapa interactivo guardado en 'mapa_clusters_interactivo_global.html'")
 
+
+
 ```
+
