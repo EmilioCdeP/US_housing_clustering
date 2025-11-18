@@ -359,11 +359,11 @@ station, restaurant, supermarket, park, hospital → también algo superiores.
 
 A diferencia del cluster 2, los valores no son extremos → zonas urbanas consolidadas pero no top, posiblemente barrios intermedios o en expansión, con precios en crecimiento y buena accesibilidad.
 
-## Visualizaciones Geoespaciales con geopandas.
+# Visualizaciones Geoespaciales con geopandas.
 
 La cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas
 
-#### Lectura de los datos geoespaciales.
+### Lectura de los datos geoespaciales.
 
 ```{python}
 #| eval: true

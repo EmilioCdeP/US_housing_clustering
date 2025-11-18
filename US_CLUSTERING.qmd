@@ -360,11 +360,11 @@ station, restaurant, supermarket, park, hospital → also somewhat higher.
 
 Unlike cluster 2, the values are not extreme → consolidated but not top-tier urban areas, possibly intermediate or expanding neighborhoods, with rising prices and good accessibility.
 
-## Geospatial visualizations with geopandas.
+# Geospatial visualizations with geopandas.
 
 We obtain the cartography from the U.S. Census here: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas
 
-#### Reading the geospatial data.
+### Reading the geospatial data.
 
 ```{python}
 #| eval: true

@@ -21,13 +21,6 @@
     "text": "Data Loading\nWe begin by loading the main dataset from Kaggle (HousingTS) and performing a brief exploration to better understand its structure. Here is the link to the dataset:\nSince this project is being carried out in Positron, we visualize the dataset directly in the IDE and verify that the percentage of missing data is 0 across all variables. It is a clean dataset, ready for analysis."
   },
   {
-    "objectID": "US_CLUSTERING.html#geospatial-visualizations-with-geopandas.",
-    "href": "US_CLUSTERING.html#geospatial-visualizations-with-geopandas.",
-    "title": "Real Estate Market Analysis in the United States",
-    "section": "Geospatial visualizations with geopandas.",
-    "text": "Geospatial visualizations with geopandas.\nWe obtain the cartography from the U.S. Census here: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nReading the geospatial data.\nFirst we visualize the clusters across the entire U.S.\n\n\n\n\n\n\n\n\n\nThen we create a interactive map zoomed into a city, in this case Boston (BOS)."
-  },
-  {
     "objectID": "US_CLUSTERING.html#interactive-map-of-boston.",
     "href": "US_CLUSTERING.html#interactive-map-of-boston.",
     "title": "Real Estate Market Analysis in the United States",
@@ -54,13 +47,6 @@
     "title": "Análisis del mercado inmobiliario en Estados Unidos",
     "section": "Carga de datos",
     "text": "Carga de datos\nEmpezamos cargando el dataset principal desde Kaggle (HousingTS) y hacemos una pequeña exploración para comprenderlo mejor. Este es el link del dataset:\nComo este proyecto lo estamos realizado a través de positron visualizamos en el propio IDE el dataset y vemos que el porcentaje de datos missing es 0 para todas las variables. Es un dataset limpio y listo para analizar."
-  },
-  {
-    "objectID": "EEUU_CLUSTERIZADO.html#visualizaciones-geoespaciales-con-geopandas.",
-    "href": "EEUU_CLUSTERIZADO.html#visualizaciones-geoespaciales-con-geopandas.",
-    "title": "Análisis del mercado inmobiliario en Estados Unidos",
-    "section": "Visualizaciones Geoespaciales con geopandas.",
-    "text": "Visualizaciones Geoespaciales con geopandas.\nLa cartografía la obtenemos del census estadounidense aquí: https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2020&layergroup=ZIP%20Code%20Tabulation%20Areas\n\nLectura de los datos geoespaciales.\nPrimero visualizamos el mapa completo de EEUU con los clusters.\n\n\n\n\n\n\n\n\n\nLuego visualizamos el mapa interactivo de NY."
   },
   {
     "objectID": "EEUU_CLUSTERIZADO.html#mapa-interactivo-de-ny.",
