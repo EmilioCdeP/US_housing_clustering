@@ -156,7 +156,7 @@ plt.figure(figsize=(9,6))
 scatter = plt.scatter(pca_df["PC1"], pca_df["PC2"], c=pca_df["cluster"], s=10, alpha=0.6)
 plt.xlabel("PC1")
 plt.ylabel("PC2")
-plt.title(f"K-means en espacio PCA (k={best_k})")
+plt.title(f"K-means clusters (k={best_k}) en PC1 vs PC2")
 plt.show()
 
 
